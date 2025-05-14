@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.551">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Viviane LE HAY">
+<meta name="dcterms.date" content="2025-05-13">
+
+<title>Pratiques avancées de l’analyse géométrique des données</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Notebook_AGD_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Notebook_AGD_files/libs/quarto-html/quarto.js"></script>
+<script src="Notebook_AGD_files/libs/quarto-html/popper.min.js"></script>
+<script src="Notebook_AGD_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Notebook_AGD_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Notebook_AGD_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Notebook_AGD_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Notebook_AGD_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Notebook_AGD_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Notebook_AGD_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Pratiques avancées de l’analyse géométrique des données</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Viviane LE HAY </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 13, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div style="text-align: center;">
+<p><strong><em>Atelier Méthodes CED</em></strong></p>
+<p><strong><em>Viviane LE HAY - Mai 2025</em></strong></p>
+</div>
+<p>Ce document détaille pas à pas les étapes de réalisation des analyses géométriques les plus simples quand on débute dans l’application de cette méthode avec R studio :</p>
+<ul>
+<li>Analyse en composantes principales (ACP)</li>
+<li>Analyse des correspondances multiples (ACM)</li>
+<li>Analyse des correspondances multiples spécifiques (ACM spé)</li>
+</ul>
+<p>Les exemples que nous utiliserons ici sont tirés de la littérature académique (avec accès aux données utilisées par leurs auteur/ices) :</p>
+<ul>
+<li><p>ACP : Mayer Nonna, 2013, « Les effets politiques de la crise. Le vote des personnes pauvres et précaires en 2012 »,&nbsp;<em>Informations sociales</em>, 180(6) : 52-59.</p></li>
+<li><p>ACP : Safi Mirna, 2006, « Le processus d’intégration des immigrés en France : inégalités et segmentation&nbsp;»,&nbsp;<em>Revue française de sociologie</em>, 47(1) : 3-48.</p></li>
+<li><p>ACM: Duval Julien, 2006, « L’art du réalisme. Le champ du cinéma français au début des années 2000 »,&nbsp;<em>Actes de la recherche en sciences sociales,</em>&nbsp;161-162 : 96-115</p></li>
+<li><p>ACM : Le Hay Viviane, Vedel Thierry et Chanvril Flora, 2011 « Usage des médias et politique : une écologie des pratiques informationnelles », Réseaux, (170) : 46-73.</p></li>
+</ul>
+<section id="préalables-installer-et-charger-les-packages" class="level1">
+<h1>Préalables : installer et charger les packages</h1>
+<!--TODO : ajouter la possibilité de juste sourcer avec la solution mickael-->
+<p><em>Dans notre cas, il est possible de simplifier l’installation et le chargement des packages en faisant appel au fichier requirements.R qui liste l’ensemble des éléments nécessaires :</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"requirements.R"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Exécuter la commande ci-dessus revient à installer les packages et les charger, processus sinon détaillé ci-dessous.</p>
+<section id="installation-des-packages-utiles" class="level2">
+<h2 class="anchored" data-anchor-id="installation-des-packages-utiles">Installation des packages utiles</h2>
+<blockquote class="blockquote">
+<p>script pour chaque package : <span style="color: green;">install.packages(“NomPackage”)</span></p>
+</blockquote>
+<p><strong>Liste des packages utiles</strong> pour ce qui nous concerne :</p>
+<ul>
+<li><em>AGD</em> : Factoshiny, FactoMineR, FactoInvestigate,</li>
+<li><em>Visualisation de graphes</em> : ggplot2, shiny, ggpmisc, dplyr</li>
+</ul>
+<!--TODO : COMPLÉTER la liste selon ce qu'on a ajouté-->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("Factoshiny")</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("FactoMineR")</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("shiny")</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("ggplot2") </span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("FactoInvestigate") </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("ggpp")</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("dplyr") </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("ggpmisc")</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("dplyr")</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("haven")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="chargement-des-packages-utiles" class="level2">
+<h2 class="anchored" data-anchor-id="chargement-des-packages-utiles">Chargement des packages utiles</h2>
+<blockquote class="blockquote">
+<p>script pour chaque package : <span style="color: green;">library(“NomPackage”)</span></p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoMineR)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(shiny)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FactoInvestigate)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(Factoshiny)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpp)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpmisc)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(base)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="exemple-1---mise-en-oeuvre-simple-pour-apprivoiser-r-et-comprendre-ce-que-fait-lacp" class="level1">
+<h1>Exemple 1 - Mise en oeuvre simple pour apprivoiser R et comprendre “ce que fait” l’ACP</h1>
+<div style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;">
+<p><strong>Un mini jeu de données à 2 variables continues</strong><br>
+–&gt; Taux de chômage en France 2000 / 2007 (données OCDE)</p>
+</div>
+<section id="etape-1-import-vérification-du-fichier-dans-r-statistiques-descriptives" class="level2">
+<h2 class="anchored" data-anchor-id="etape-1-import-vérification-du-fichier-dans-r-statistiques-descriptives">Etape 1 : Import &amp; vérification du fichier dans R (statistiques descriptives)</h2>
+<p>Opération possible <em>via</em> le menu déroulant de Rstudio (le fichier est dans cet exemple au <span style="color: #C514D7;">format excel</span>) :</p>
+<blockquote class="blockquote">
+<p>File –&gt; Import Dataset –&gt; From Excel</p>
+</blockquote>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ici il faut possiblement adapter le chemin à sa propre arborescence</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ex1 <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/EX1_DonneesOCDE_Base2.xls"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># View(ex1) # view vous sera utile dans Rstudio ou équivalent, mais comme il ouvre un autre objet on se contente ici d'afficher les premières lignes du fichier</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  id                TxChmge2000 TxChmge2007 TxChmge2000CR TxChmge2007CR
+  &lt;chr&gt;                   &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+1 Paris                   10.2         9.16         0.126        0.871 
+2 Seine-et-Marne           6.55        6.64        -1.09        -0.556 
+3 Yvelines                 6.31        6.38        -1.16        -0.707 
+4 Essonne                  6.45        6.12        -1.12        -0.855 
+5 Hauts-de-Seine           7.93        7.55        -0.632       -0.0422
+6 Seine-Saint-Denis       13.2        11.5          1.11         2.20  </code></pre>
+</div>
+</div>
+<p><span style="color: red;">ex1</span> = c’est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple (vous pouvez l’appeler ‘fraise’ si vous le souhaitez : alors vous l’écrivez ainsi dans le script :</p>
+<p><code>fraise &lt;- read_excel("ex5b-trivial-acp.xls"</code></p>
+<p>NB : Il est plus simple de choisir un nom court, facile à manipuler.</p>
+<section id="statistiques-descriptives-variables-continues" class="level3">
+<h3 class="anchored" data-anchor-id="statistiques-descriptives-variables-continues">Statistiques descriptives (variables continues)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      id             TxChmge2000      TxChmge2007     TxChmge2000CR    
+ Length:95          Min.   : 5.034   Min.   : 4.478   Min.   :-1.5852  
+ Class :character   1st Qu.: 8.069   1st Qu.: 6.400   1st Qu.:-0.5856  
+ Mode  :character   Median : 9.277   Median : 7.341   Median :-0.1879  
+                    Mean   : 9.848   Mean   : 7.625   Mean   : 0.0000  
+                    3rd Qu.:10.825   3rd Qu.: 8.556   3rd Qu.: 0.3220  
+                    Max.   :21.472   Max.   :12.205   Max.   : 3.8279  
+ TxChmge2007CR    
+ Min.   :-1.7831  
+ 1st Qu.:-0.6942  
+ Median :-0.1611  
+ Mean   : 0.0000  
+ 3rd Qu.: 0.5272  
+ Max.   : 2.5944  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(ex1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  id                TxChmge2000 TxChmge2007 TxChmge2000CR TxChmge2007CR
+  &lt;chr&gt;                   &lt;dbl&gt;       &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+1 Paris                   10.2         9.16         0.126        0.871 
+2 Seine-et-Marne           6.55        6.64        -1.09        -0.556 
+3 Yvelines                 6.31        6.38        -1.16        -0.707 
+4 Essonne                  6.45        6.12        -1.12        -0.855 
+5 Hauts-de-Seine           7.93        7.55        -0.632       -0.0422
+6 Seine-Saint-Denis       13.2        11.5          1.11         2.20  </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="etape-2-visualisation-du-nuage-de-points-des-variables-initiales" class="level2">
+<h2 class="anchored" data-anchor-id="etape-2-visualisation-du-nuage-de-points-des-variables-initiales">Etape 2 : Visualisation du nuage de points des variables initiales</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ex1, <span class="fu">aes</span>(<span class="at">x =</span> TxChmge2000CR, <span class="at">y =</span> TxChmge2007CR)) <span class="sc">+</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"#EF6A40"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> id), <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Ici je peux mettre un titre"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"légende pour l'axe x"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"légende pour l'axe y"</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div style="border: 2px solid #4840EF; padding: 10px; background-color: #F4F5EE;">
+<p><strong>Dico script R</strong></p>
+<ul>
+<li>geom_point : taille et couleur des points - geom_text : label et ajustement des points</li>
+<li>labs : titre du graphes et des axes</li>
+</ul>
+<p><strong>Trucs et astuces</strong></p>
+<ul>
+<li>lien pour les codes des couleurs : <a href="https://htmlcolorcodes.com" class="uri">https://htmlcolorcodes.com</a></li>
+</ul>
+</div>
+<section id="etiqueter-sans-chevauchement-de-labels-package-ggrepel" class="level3">
+<h3 class="anchored" data-anchor-id="etiqueter-sans-chevauchement-de-labels-package-ggrepel">Etiqueter sans chevauchement de labels : package ggrepel</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ex1, <span class="fu">aes</span>(<span class="at">x =</span> TxChmge2000CR, <span class="at">y =</span> TxChmge2007CR)) <span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">label =</span> id), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">max.overlaps =</span> <span class="cn">Inf</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">title =</span> <span class="st">"Ici je peux mettre un titre"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"légende pour l'axe x"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"légende pour l'axe y"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="sélectionner-certains-points-que-lon-souhaite-étiqueter-et-pas-les-autres-packages-dplyr-et-ggpmisc" class="level3">
+<h3 class="anchored" data-anchor-id="sélectionner-certains-points-que-lon-souhaite-étiqueter-et-pas-les-autres-packages-dplyr-et-ggpmisc">Sélectionner certains points que l’on souhaite étiqueter (et pas les autres) : packages dplyr et ggpmisc</h3>
+<p><span style="color: #C514D7;">==&gt; J’appelle ce graphe intermédiaire “p”</span>)</p>
+<p>Dans le script ci-dessous, c’est ce que signifie :</p>
+<p><span style="color: #C514D7;">==&gt; p &lt;-</span></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identifier les points extrêmes à annoter (par exemple sur Y)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>points_a_annoter <span class="ot">&lt;-</span> ex1 <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(TxChmge2007CR) <span class="sc">%&gt;%</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">5</span>) <span class="sc">%&gt;%</span>    <span class="co"># les 5 plus bas</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    ex1 <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(TxChmge2007CR)) <span class="sc">%&gt;%</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">7</span>)  <span class="co"># les 7 plus hauts</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Ajouter aussi le point avec la valeur maximale sur l'axe X</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>points_max_pop <span class="ot">&lt;-</span> ex1 <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(TxChmge2000CR)) <span class="sc">%&gt;%</span> <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">9</span>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Combiner avec les autres extrêmes</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>points_a_annoter <span class="ot">&lt;-</span> ex1 <span class="sc">%&gt;%</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(TxChmge2000CR) <span class="sc">%&gt;%</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">7</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    ex1 <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(<span class="fu">desc</span>(TxChmge2007CR)) <span class="sc">%&gt;%</span> <span class="fu">slice_head</span>(<span class="at">n =</span> (<span class="dv">7</span>)),</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    points_max_pop</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()  <span class="co"># pour éviter les doublons</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Nuage de points avec étiquettes seulement sur les points extrêmes</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(ex1, <span class="fu">aes</span>(<span class="at">x =</span> TxChmge2000CR, <span class="at">y =</span> TxChmge2007CR)) <span class="sc">+</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"steelblue"</span>, <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> points_a_annoter,</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> id),</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a> <span class="at">title =</span> <span class="st">"Ici je peux mettre un titre"</span>,</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"légende pour l'axe x"</span>,</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"légende pour l'axe y"</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ajout-de-la-droite-de-régression-au-graphe-p-déjà-construit" class="level3">
+<h3 class="anchored" data-anchor-id="ajout-de-la-droite-de-régression-au-graphe-p-déjà-construit">Ajout de la Droite de régression au graphe “p” déjà construit</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpmisc)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Nuage de points avec étiquettes seulement sur les points extrêmes</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># + ajout de la droite de régression avec geom_smooth</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>p <span class="sc">+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">TRUE</span>, <span class="at">color =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_poly_eq</span>(</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">paste</span>(..eq.label.., ..rr.label.., <span class="at">sep =</span> <span class="st">"~~~"</span>)),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">formula =</span> y <span class="sc">~</span> x,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">parse =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">4</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"darkred"</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="facultatif-acp-dans-factoshiny" class="level3">
+<h3 class="anchored" data-anchor-id="facultatif-acp-dans-factoshiny">facultatif : ACP dans Factoshiny</h3>
+<p>Factoshiny permet de faire une exploration rapide du résultat de l’analyse géométrique.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># script en commentaire pour qu'il ne s'exécute pas dans le notebook</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># acp &lt;- Factoshiny(ex1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+Dès lors que l’on est dans Factoshiny, on peut cocher :
+<center>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="">Get the PCA code</label></li>
+</ul>
+</center>
+<p>Qui fournit le script associé aux opérations menées en click-bouton.</p>
+<p>On peut ensuite le copier-coller dans la console R : - pour garder la trace de ce que l’on a fait - pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny</p>
+<p><span style="color: purple;"><strong><em>ATTENTION</em></strong></span> - <span style="color: purple;">Pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge), il ne faut pas oublier de cliquer sur :</span></p>
+<center>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="">Quit the app</label></li>
+</ul>
+</center>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>res.PCA<span class="ot">&lt;-</span><span class="fu">PCA</span>(ex1,<span class="at">quali.sup=</span><span class="fu">c</span>(<span class="dv">1</span>),<span class="at">quanti.sup=</span><span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>),<span class="at">graph=</span><span class="cn">FALSE</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA,<span class="at">choix=</span><span class="st">'var'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA,<span class="at">invisible=</span><span class="fu">c</span>(<span class="st">'ind'</span>,<span class="st">'ind.sup'</span>),<span class="at">select=</span><span class="st">'contrib  95'</span>,<span class="at">cex=</span><span class="fl">0.5</span>,<span class="at">cex.main=</span><span class="fl">0.5</span>,<span class="at">cex.axis=</span><span class="fl">0.5</span>,<span class="at">label =</span><span class="fu">c</span>(<span class="st">'quali'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res.PCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+PCA(X = ex1, quanti.sup = c(4, 5), quali.sup = c(1), graph = FALSE) 
+
+
+Eigenvalues
+                       Dim.1   Dim.2
+Variance               1.849   0.151
+% of var.             92.458   7.542
+Cumulative % of var.  92.458 100.000
+
+Individuals (the 10 first)
+                            Dist    Dim.1    ctr   cos2    Dim.2    ctr   cos2
+1                       |  0.885 |  0.709  0.286  0.641 |  0.530  1.962  0.359
+2                       |  1.227 | -1.168  0.776  0.906 |  0.377  0.993  0.094
+3                       |  1.369 | -1.330  1.007  0.944 |  0.324  0.734  0.056
+4                       |  1.416 | -1.404  1.121  0.982 |  0.187  0.245  0.018
+5                       |  0.636 | -0.479  0.131  0.567 |  0.419  1.225  0.433
+6                       |  2.476 |  2.352  3.148  0.902 |  0.774  4.177  0.098
+7                       |  0.453 | -0.094  0.005  0.043 |  0.443  1.368  0.957
+8                       |  0.732 |  0.167  0.016  0.052 |  0.712  3.542  0.948
+9                       |  2.549 |  2.549  3.698  1.000 |  0.038  0.010  0.000
+10                      |  0.624 |  0.622  0.220  0.992 |  0.057  0.022  0.008
+                         
+1                       |
+2                       |
+3                       |
+4                       |
+5                       |
+6                       |
+7                       |
+8                       |
+9                       |
+10                      |
+
+Variables
+                           Dim.1    ctr   cos2    Dim.2    ctr   cos2  
+TxChmge2000             |  0.962 50.000  0.925 | -0.275 50.000  0.075 |
+TxChmge2007             |  0.962 50.000  0.925 |  0.275 50.000  0.075 |
+
+Supplementary continuous variables
+                           Dim.1   cos2    Dim.2   cos2  
+TxChmge2000CR           |  0.962  0.925 | -0.275  0.075 |
+TxChmge2007CR           |  0.962  0.925 |  0.275  0.075 |
+
+Supplementary categories (the 10 first)
+                            Dist    Dim.1   cos2 v.test    Dim.2   cos2 v.test
+Ain                     |  2.231 | -2.231  1.000 -1.640 | -0.035  0.000 -0.090
+Aisne                   |  2.901 |  2.742  0.894  2.017 |  0.946  0.106  2.436
+Allier                  |  1.237 |  1.154  0.870  0.849 |  0.446  0.130  1.147
+Alpes-de-Haute-Provence |  0.792 |  0.788  0.990  0.579 | -0.080  0.010 -0.205
+Alpes-Maritimes         |  0.590 |  0.406  0.475  0.299 | -0.427  0.525 -1.101
+Ardèche                 |  0.278 |  0.100  0.129  0.073 |  0.259  0.871  0.667
+Ardennes                |  2.549 |  2.549  1.000  1.874 |  0.038  0.000  0.097
+Ariège                  |  1.048 |  0.930  0.787  0.684 |  0.484  0.213  1.245
+Aube                    |  0.624 |  0.622  0.992  0.457 |  0.057  0.008  0.146
+Aude                    |  1.896 |  1.883  0.986  1.385 | -0.223  0.014 -0.574
+                         
+Ain                     |
+Aisne                   |
+Allier                  |
+Alpes-de-Haute-Provence |
+Alpes-Maritimes         |
+Ardèche                 |
+Ardennes                |
+Ariège                  |
+Aube                    |
+Aude                    |</code></pre>
+</div>
+</div>
+<!--
+TODO : vérif ici, tu avais un dimdesc(res.PCA) qui plante :
+Error in `if (sum(tabF[, 2] <= proba) > 0) ...`:
+! missing value where TRUE/FALSE needed
+-->
+</section>
+</section>
+</section>
+<section id="exemple-2---acp---article-m.-safi" class="level1">
+<h1>Exemple 2 - ACP - Article M. Safi</h1>
+<section id="etape-3-import-vérification-du-fichier-dans-r" class="level2">
+<h2 class="anchored" data-anchor-id="etape-3-import-vérification-du-fichier-dans-r">Etape 3 : Import &amp; vérification du fichier dans R</h2>
+<p>Opération possible via le menu déroulant de Rstudio</p>
+<!-- TODO : amender cette partie tu as du changer le type du fichier
+ancien passage : "
+(le fichier est dans cet exemple au format STATA (extension .dta) ) :
+
+> File --\> Import Sataset --\> From Stata
+ATTENTION:
+"
+-->
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>safi <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"data/EX2_ACP_MirnaSAFI_Extract.xls"</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(safi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+    app  cult   nor   mix   eco inat3          
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;          
+1  0    0.300 0.5   0.667 0.611 Portugal       
+2  0.5  0.5   0.833 0.833 0.667 Portugal       
+3  0.5  0.875 1     0.583 0.583 Portugal       
+4  0.75 0.833 0.333 0.833 0.361 Autres         
+5  1    0.5   0.583 0.667 0.833 Asie du Sud-Est
+6  0    0.5   0.583 0.375 0.417 Portugal       </code></pre>
+</div>
+</div>
+<p><span style="color: red;">safi</span> = le nom qui servira à appeler le jeu de données dans R dans la suite de l’exercice.</p>
+<p>Statistiques descriptives (variables continues) :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(safi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      app              cult             nor              mix        
+ Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:0.2500   1st Qu.:0.2500   1st Qu.:0.2500   1st Qu.:0.3333  
+ Median :0.5000   Median :0.4286   Median :0.5000   Median :0.5000  
+ Mean   :0.4451   Mean   :0.4624   Mean   :0.4587   Mean   :0.5543  
+ 3rd Qu.:0.7500   3rd Qu.:0.6667   3rd Qu.:0.6667   3rd Qu.:0.7500  
+ Max.   :1.0000   Max.   :1.0000   Max.   :1.0000   Max.   :1.0000  
+      eco            inat3          
+ Min.   :0.0000   Length:8862       
+ 1st Qu.:0.3611   Class :character  
+ Median :0.4722   Mode  :character  
+ Mean   :0.4788                     
+ 3rd Qu.:0.5833                     
+ Max.   :1.0000                     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#desc(safi) # Error in xtfrm.data.frame(x) : cannot xtfrm data frames</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> : verif</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="etape-4--facultatif--acp-dans-factoshiny" class="level2">
+<h2 class="anchored" data-anchor-id="etape-4--facultatif--acp-dans-factoshiny">Etape 4 -facultatif- : ACP dans Factoshiny</h2>
+<p>Factoshiny permet de faire une exploration rapide du résultat de l’analyse géométrique.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># script en commentaire pour qu'il ne s'exécute pas dans le notebook</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># acp &lt;- Factoshiny(safi)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Dès lors que l’on est dans Factoshiny, on peut cocher :</p>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="">Get the PCA code</label></li>
+</ul>
+<p>Il devient possible de le copier-coller dans la console R :</p>
+<ol type="1">
+<li><p>pour garder la trace de ce que l’on a fait</p></li>
+<li><p>pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny</p></li>
+</ol>
+<p><span style="color: purple;"><strong><em>ATTENTION</em></strong></span> - <span style="color: purple;">Pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge), il ne faut pas oublier de cliquer sur :</span></p>
+<ul class="task-list">
+<li><label><input type="checkbox" checked="">Quit the app</label></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># graphiques initiaux réalisés dans Factoshiny</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>res.PCA<span class="ot">&lt;-</span><span class="fu">PCA</span>(safi,<span class="at">quali.sup=</span><span class="fu">c</span>(<span class="dv">6</span>),<span class="at">graph=</span><span class="cn">FALSE</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA,<span class="at">choix=</span><span class="st">'var'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA,<span class="at">invisible=</span><span class="fu">c</span>(<span class="st">'ind.sup'</span>),<span class="at">habillage=</span><span class="dv">6</span>,<span class="at">cex=</span><span class="fl">0.8</span>,<span class="at">cex.main=</span><span class="fl">0.8</span>,<span class="at">cex.axis=</span><span class="fl">0.8</span>,<span class="at">label =</span><span class="fu">c</span>(<span class="st">'quali'</span>, <span class="at">cex =</span> <span class="dv">3</span>, <span class="at">col =</span> <span class="st">"black"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-16-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA,<span class="at">invisible=</span><span class="fu">c</span>(<span class="st">'ind.sup'</span>),<span class="at">cex=</span><span class="fl">1.2</span>,<span class="at">cex.main=</span><span class="fl">1.2</span>,<span class="at">cex.axis=</span><span class="fl">1.2</span>,<span class="at">label =</span><span class="fu">c</span>(<span class="st">'quali'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(res.PCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+PCA(X = safi, quali.sup = c(6), graph = FALSE) 
+
+
+Eigenvalues
+                       Dim.1   Dim.2   Dim.3   Dim.4   Dim.5
+Variance               2.625   0.685   0.645   0.599   0.446
+% of var.             52.502  13.706  12.901  11.981   8.911
+Cumulative % of var.  52.502  66.208  79.108  91.089 100.000
+
+Individuals (the 10 first)
+                    Dist    Dim.1    ctr   cos2    Dim.2    ctr   cos2    Dim.3
+1               |  1.733 | -0.331  0.000  0.036 |  1.333  0.029  0.591 |  1.000
+2               |  1.970 |  1.611  0.011  0.668 |  0.991  0.016  0.253 |  0.409
+3               |  2.468 |  1.906  0.016  0.596 |  0.850  0.012  0.119 | -1.143
+4               |  2.126 |  1.070  0.005  0.253 | -1.556  0.040  0.536 | -0.039
+5               |  2.714 |  2.084  0.019  0.589 | -0.073  0.000  0.001 |  0.507
+6               |  1.626 | -0.817  0.003  0.252 |  0.972  0.016  0.357 | -0.560
+7               |  1.627 |  1.437  0.009  0.781 |  0.442  0.003  0.074 |  0.132
+8               |  1.964 |  1.191  0.006  0.367 |  0.872  0.013  0.197 | -0.115
+9               |  2.061 | -1.678  0.012  0.663 |  0.544  0.005  0.070 | -0.107
+10              |  2.410 | -1.703  0.012  0.500 |  0.242  0.001  0.010 |  1.051
+                   ctr   cos2  
+1                0.017  0.333 |
+2                0.003  0.043 |
+3                0.023  0.215 |
+4                0.000  0.000 |
+5                0.004  0.035 |
+6                0.005  0.119 |
+7                0.000  0.007 |
+8                0.000  0.003 |
+9                0.000  0.003 |
+10               0.019  0.190 |
+
+Variables
+                   Dim.1    ctr   cos2    Dim.2    ctr   cos2    Dim.3    ctr
+app             |  0.727 20.119  0.528 | -0.498 36.178  0.248 | -0.165  4.237
+cult            |  0.780 23.189  0.609 | -0.234  7.962  0.055 | -0.266 10.959
+nor             |  0.693 18.273  0.480 |  0.532 41.344  0.283 | -0.404 25.321
+mix             |  0.709 19.136  0.502 | -0.063  0.574  0.004 |  0.521 42.134
+eco             |  0.711 19.282  0.506 |  0.309 13.941  0.096 |  0.335 17.349
+                  cos2  
+app              0.027 |
+cult             0.071 |
+nor              0.163 |
+mix              0.272 |
+eco              0.112 |
+
+Supplementary categories
+                     Dist     Dim.1    cos2  v.test     Dim.2    cos2  v.test  
+Afrique         |   0.508 |  -0.200   0.154  -3.509 |  -0.237   0.218  -8.157 |
+Algerie         |   0.582 |  -0.519   0.798 -13.427 |  -0.179   0.095  -9.047 |
+Asie du Sud-Est |   0.951 |   0.828   0.758  11.697 |  -0.262   0.076  -7.244 |
+Autres          |   0.619 |   0.267   0.185   2.798 |  -0.474   0.585  -9.728 |
+Espagne         |   1.650 |   1.646   0.995  39.123 |   0.013   0.000   0.593 |
+Inconnue        |   0.173 |  -0.015   0.007  -0.108 |  -0.116   0.448  -1.663 |
+Maroc           |   0.674 |  -0.638   0.898 -16.711 |  -0.155   0.053  -7.956 |
+Portugal        |   0.932 |   0.768   0.678  19.409 |   0.452   0.235  22.371 |
+Turquie         |   1.211 |  -1.147   0.899 -30.850 |   0.188   0.024   9.917 |
+                  Dim.3    cos2  v.test  
+Afrique           0.033   0.004   1.154 |
+Algerie          -0.066   0.013  -3.449 |
+Asie du Sud-Est  -0.305   0.103  -8.687 |
+Autres           -0.259   0.175  -5.483 |
+Espagne           0.029   0.000   1.401 |
+Inconnue          0.024   0.019   0.350 |
+Maroc             0.139   0.043   7.346 |
+Portugal         -0.127   0.018  -6.467 |
+Turquie           0.145   0.014   7.861 |</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dimdesc</span>(res.PCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$Dim.1
+
+Link between the variable and the continuous variables (R-square)
+=================================================================================
+     correlation p.value
+cult   0.7802199       0
+app    0.7267331       0
+eco    0.7114549       0
+mix    0.7087579       0
+nor    0.6925975       0
+
+Link between the variable and the categorical variable (1-way anova)
+=============================================
+             R2 p.value
+inat3 0.3320511       0
+
+Link between variable and the categories of the categorical variables
+================================================================
+                        Estimate       p.value
+inat3=Espagne          1.5358563  0.000000e+00
+inat3=Portugal         0.6578828  1.078244e-85
+inat3=Asie du Sud-Est  0.7179271  7.824658e-32
+inat3=Autres           0.1568047  5.141114e-03
+inat3=Afrique         -0.3094177  4.487460e-04
+inat3=Algerie         -0.6290998  1.666087e-41
+inat3=Maroc           -0.7482676  1.176393e-63
+inat3=Turquie         -1.2572278 6.552151e-221
+
+$Dim.2
+
+Link between the variable and the continuous variables (R-square)
+=================================================================================
+     correlation       p.value
+nor   0.53229116  0.000000e+00
+eco   0.30909691 1.740282e-195
+mix  -0.06273281  3.409836e-09
+cult -0.23359217 4.042234e-110
+app  -0.49792202  0.000000e+00
+
+Link between the variable and the categorical variable (1-way anova)
+=============================================
+              R2       p.value
+inat3 0.09342934 3.261218e-182
+
+Link between variable and the categories of the categorical variables
+================================================================
+                         Estimate       p.value
+inat3=Portugal         0.53756860 5.040441e-114
+inat3=Turquie          0.27393943  2.688997e-23
+inat3=Asie du Sud-Est -0.17644534  4.034943e-13
+inat3=Maroc           -0.06984291  1.589331e-15
+inat3=Afrique         -0.15164993  3.042982e-16
+inat3=Algerie         -0.09330319  1.218672e-19
+inat3=Autres          -0.38813316  1.792162e-22
+
+$Dim.3
+
+Link between the variable and the continuous variables (R-square)
+=================================================================================
+     correlation       p.value
+mix    0.5213206  0.000000e+00
+eco    0.3345249 1.187163e-230
+app   -0.1653199  2.477895e-55
+cult  -0.2658747 2.856076e-143
+nor   -0.4041385  0.000000e+00
+
+Link between the variable and the categorical variable (1-way anova)
+=============================================
+              R2      p.value
+inat3 0.02756394 5.741584e-49
+
+Link between variable and the categories of the categorical variables
+================================================================
+                         Estimate      p.value
+inat3=Turquie          0.18794537 3.442041e-15
+inat3=Maroc            0.18215448 1.880371e-13
+inat3=Algerie         -0.02309913 5.617878e-04
+inat3=Autres          -0.21598379 4.079047e-08
+inat3=Portugal        -0.08378498 9.514842e-11
+inat3=Asie du Sud-Est -0.26171975 3.168040e-18</code></pre>
+</div>
+</div>
+<section id="exemple-3---acp---score-epices-n.-mayer" class="level3">
+<h3 class="anchored" data-anchor-id="exemple-3---acp---score-epices-n.-mayer">Exemple 3 - ACP - Score Epices (N. Mayer)</h3>
+<div style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;">
+<p><strong><strong>A VOUS DE JOUER !!</strong></strong></p>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(haven) <span class="co"># bug ici si on rappelle pas haven</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> :check pourquoi plante si rappelle pas haven. autre appel de lib entre temps qui écrase la focntion ?</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>epices <span class="ot">&lt;-</span> <span class="fu">read_dta</span>(<span class="st">"data/EX3_Epices.dta"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(epices)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 26
+  numquest EPICES EPICESX QUINTEPI  Sport_Non Spectacle_Non Vacances_Non
+     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl+lbl&gt;     &lt;dbl&gt;         &lt;dbl&gt;        &lt;dbl&gt;
+1        1   21.9    15.9 1 [2.0]           2             1            1
+2        2   48.5    44.6 4 [5.0]           1             1            1
+3        3   45.6    41.4 4 [5.0]           2             1            2
+4        4   48.5    44.6 4 [5.0]           1             1            1
+5        5   78.7    77.1 4 [5.0]           2             2            2
+6        6   28.4    22.9 2 [3.0]           2             1            1
+# ℹ 19 more variables: Contact_Famille_Non &lt;dbl&gt;, Hébergement_Non &lt;dbl&gt;,
+#   SRevenuUC_Faible &lt;dbl&gt;, Propriétaire_Non &lt;dbl&gt;, SBienRapport_Non &lt;dbl&gt;,
+#   STerre_Non &lt;dbl&gt;, SActions_Non &lt;dbl&gt;, SEconomies_Non &lt;dbl&gt;,
+#   STéléphoneMobile_Non &lt;dbl&gt;, SOrdiPortable_Non &lt;dbl&gt;, SVoiture_Non &lt;dbl&gt;,
+#   SLaveVaisselle_Non &lt;dbl&gt;, SInternet_Non &lt;dbl&gt;, SPatrimoine_Faible &lt;dbl&gt;,
+#   SEmprunts_Importants &lt;dbl&gt;, Mutuelle_Non &lt;dbl&gt;, Couple_Non &lt;dbl&gt;,
+#   Difficultés_Financières_Oui &lt;dbl&gt;, Ass_Sociale_Oui &lt;dbl&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Factochiny</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">#acp &lt;- Factoshiny(epices)</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>res.PCA<span class="ot">&lt;-</span><span class="fu">PCA</span>(epices,<span class="at">quanti.sup=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>),<span class="at">graph=</span><span class="cn">FALSE</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA,<span class="at">choix=</span><span class="st">'var'</span>,<span class="at">cex=</span><span class="fl">0.75</span>,<span class="at">cex.main=</span><span class="fl">0.75</span>,<span class="at">cex.axis=</span><span class="fl">0.75</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">col.quanti.sup=</span><span class="st">'#0000FF'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot.PCA</span>(res.PCA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Notebook_AGD_files/figure-html/unnamed-chunk-17-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

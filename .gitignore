@@ -45,3 +45,6 @@ _cache/
 *_cache/
 _knit_cache/
 *.utf8.md
+
+# Ignore directories that store output assets from Quarto
+*_files/
