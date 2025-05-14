@@ -11,13 +11,13 @@
 #install.packages("ggpmisc")
 #install.packages("readxl")
 #install.packages("ggrepel")
-
-
-##Vérif à ajouter
+#install.packages("haven")
 # install.packages("GDAtools")
 # install.packages("sf")
 # install.packages("questionr")
-#install.packages("haven")
+
+##Vérif à ajouter
+
 
 ############################
 #Chargement de ces packages utiles
@@ -32,16 +32,13 @@ library(dplyr)
 library(ggpmisc)
 library(readxl)
 library(ggrepel)
-# Vérif si de base ou si besoin ajout dans requirements :
-library(stats)
-library(base)
-
-# à ajouter ?
 library(GDAtools)
 library(sf)
 library(questionr)
 library(haven)
-
+# Vérif si de base ou si besoin ajout dans requirements :
+library(stats)
+library(base)
 
 ############################
 ############################

@@ -71,17 +71,20 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 <!--TODO: COMPLÉTER la liste selon ce qu'on a ajouté-->
 
 ```{r}
-#install.packages("Factoshiny")
-#install.packages("FactoMineR")
-#install.packages("shiny")
-#install.packages("ggplot2") 
-#install.packages("FactoInvestigate") 
-#install.packages("ggpp")
-#install.packages("dplyr") 
-#install.packages("ggpmisc")
-#install.packages("ggrepel")
-#install.packages("readxl")
-#install.packages("haven")
+# install.packages("Factoshiny")
+# install.packages("FactoMineR")
+# install.packages("shiny")
+# install.packages("ggplot2") 
+# install.packages("FactoInvestigate") 
+# install.packages("ggpp")
+# install.packages("dplyr") 
+# install.packages("ggpmisc")
+# install.packages("ggrepel")
+# install.packages("readxl")
+# install.packages("haven")
+# install.packages("GDAtools")
+# install.packages("sf")
+# install.packages("questionr")
 
 ```
 
@@ -90,17 +93,20 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 > script pour chaque package : [library("NomPackage")]{style="color: green;"}
 
 ```{r}
-library(Factoshiny)
-library(FactoMineR)
-library(shiny)
-library(ggplot2)
-library(FactoInvestigate)
-library(ggpp)
-library(dplyr)
-library(ggpmisc)
-library(ggrepel)
-library(readxl)
-library(haven)
+# library(Factoshiny)
+# library(FactoMineR)
+# library(shiny)
+# library(ggplot2)
+# library(FactoInvestigate)
+# library(ggpp)
+# library(dplyr)
+# library(ggpmisc)
+# library(ggrepel)
+# library(readxl)
+# library(haven)
+# library(GDAtools)
+# library(sf)
+# library(questionr)
 
 # TODO: vérif mais installé et chargé par défaut non ?
 # Peut virer pour nettoyer ?

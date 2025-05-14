@@ -10,7 +10,10 @@ packages <- c(
   "ggpmisc",
   "ggrepel",
   "readxl",
-  "haven"
+  "haven",
+  "GDAtools",
+  "sf",
+  "questionr"
 )
 
 # Install 
