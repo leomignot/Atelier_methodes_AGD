@@ -8,7 +8,16 @@
 #install.packages("FactoInvestigate") 
 #install.packages("ggpp")
 #install.packages("dplyr") 
-#install.packages("ggpmisc") 
+#install.packages("ggpmisc")
+#install.packages("readxl")
+#install.packages("ggrepel")
+
+
+##Vérif à ajouter
+# install.packages("GDAtools")
+# install.packages("sf")
+# install.packages("questionr")
+#install.packages("haven")
 
 ############################
 #Chargement de ces packages utiles
@@ -21,6 +30,18 @@ library(Factoshiny)
 library(ggpp)
 library(dplyr)
 library(ggpmisc)
+library(readxl)
+library(ggrepel)
+# Vérif si de base ou si besoin ajout dans requirements :
+library(stats)
+library(base)
+
+# à ajouter ?
+library(GDAtools)
+library(sf)
+library(questionr)
+library(haven)
+
 
 ############################
 ############################
@@ -29,9 +50,9 @@ library(ggpmisc)
 ############################
 
 # OUVERTURE Jeu de données
-library(readxl)
+
 # ici il faut adapter le chemin à sa propre arborescence
-ex1 <- read_excel("/Users/v.le.hay/Desktop/CED_AtelierAGD_Avril25/EX1_DonneesOCDE_Base2.xls")
+ex1 <- read_excel("data/EX1_DonneesOCDE_Base2.xls")
 View(ex1)
 
 #Statistiques descriptives (variables continues)
@@ -39,7 +60,6 @@ summary(ex1)
 head(ex1)
 
 #Visualisation du nuage de points 
-library(ggplot2)
 print(ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
   geom_point(color = "#EF6A40", size = 3) +
   geom_text(aes(label = id), hjust = -0.1, vjust = 0.5, size = 3) +
@@ -51,7 +71,6 @@ print(ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
   ))
 
 #Etiqueter sans chevauchement de labels : package ggrepel
-library(ggrepel)
 ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
   geom_point(color = "steelblue", size = 3) +
   geom_text_repel(aes(label = id), size = 3, max.overlaps = Inf) +
@@ -64,12 +83,6 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 
 #Sélectionner certains points que l'on souhaite étiqueter (et pas les autres) :
 #packages dplyr et ggpmisc
-library(stats)
-library(base)
-library(ggplot2)
-library(ggrepel)
-library(dplyr)
-
 
 # Identifier les points extrêmes à annoter (par exemple sur Y)
 points_a_annoter <- ex1 %>%
@@ -140,7 +153,7 @@ plot.PCA(res.PCA,invisible=c('ind','ind.sup'),select='contrib  95',cex=0.5,
 
 
 # Ouverture fichier
-safi <- read_excel("/Users/v.le.hay/Desktop/CED_AtelierAGD_Avril25/EX2_ACP_MirnaSAFI_Extract.xls")
+safi <- read_excel("data/EX2_ACP_MirnaSAFI_Extract.xls")
 View(safi)
 
 summary(safi)
@@ -149,6 +162,7 @@ summary(safi)
 
 # FactoMineR
 library(FactoMineR)
+library(factoextra)
 # graphiques initiaux réalisés dans Factoshiny
 res.PCA<-PCA(safi,quali.sup=c(6),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
@@ -159,14 +173,26 @@ plot.PCA(res.PCA,invisible=c('ind.sup'),cex=1.2,cex.main=1.2,cex.axis=1.2,label 
 summary(res.PCA)
 dimdesc(res.PCA)
 
+
 ############################
 ############################
 #ACP Nonna Mayer
 ############################
 ############################
 
-A VOUS DE JOUER 
+# A VOUS DE JOUER
 
+#install.packages("haven")
+library(haven)
+mayer <- read_dta("data/EX3_Epices.dta")
+mayer
+
+Factoshiny(mayer)
+
+res.PCA<-PCA(mayer,quanti.sup=c(1,2,3,4,10,12,13,14,15,16,17,18,19,20,21,22),graph=FALSE)
+plot.PCA(res.PCA,choix='var')
+plot.PCA(res.PCA,cex=0.95,cex.main=0.95,cex.axis=0.95)
+summary(res.PCA)
 
 ############################
 ############################
@@ -174,24 +200,22 @@ A VOUS DE JOUER
 ############################
 ############################
 
-A VOUS DE JOUER
+# A VOUS DE JOUER
 
 ### Pour aller plus loin
 ####################################################################
 # Je fais les graphes dans R-Studio via le package GDAtool
 # https://cran.r-project.org/web/packages/GDAtools/GDAtools.pdf
+# et celui-là :
+# https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_AGD.html
 ####################################################################
 
 # Installation des 2 packages nécessaires
 # + chargement des 2 librairies
-
-install.packages("GDAtools")
-library(GDAtools)
-
-install.packages("sf")
-library(sf)
+# > Fait plus haut désormais
 
 # je copie-colle de factoshiny
+duval <- read_excel("data/EX4_Cinema_GDAtools.xlsx")
 mca_duval<-MCA(duval,quanti.sup=c(1),quali.sup=c(17),graph=FALSE)
 summary(mca_duval) 
 dimdesc(mca_duval)
@@ -200,7 +224,7 @@ plot.MCA(mca_duval,invisible= 'ind',col.quali.sup='#006400',label =c('var','qual
 
 mca_duval$eig
 modif.rate(mca_duval)
-tabcontrib(mca_duval, dim = 1)
+tabcontrib(mca_duval, dim = 1) #nope, sur ACM spé ?
 dimdescr(mca_duval, vars = NULL, dim = c(1,2),
          limit = NULL, correlation = "pearson",
          na.rm.cat = FALSE, na.value.cat = "NA", na.rm.cont = FALSE,
@@ -253,13 +277,14 @@ ggcloud_variables(mca_duval, axes = c(1,2), points = "bestv",
 # Nuage des modalités actives qui contribuent aux 2 axes
 # toujours dans le plan 1-2
 # toutes les modalités : points = "besthv"
-p <- ggcloud_variables(mca_duval, axes = c(1,2), points = "besthv",
+ggcloud_variables(mca_duval, axes = c(1,2), points = "besthv",
                        min.ctr = NULL, max.pval = 0.01, face = "pp",
                        shapes = TRUE, prop = NULL, textsize = 3, shapesize = 3,
                        col = NULL, col.by.group = TRUE, alpha = 1,
                        segment.alpha = 0.5, vlab = FALSE, legend = "right",
                        force = 1, max.overlaps = Inf)+
   coord_fixed(ratio = 1)
+
 
 # Superposition de variables supplémentaires 'au compte-gouttes'
 # ici WW
@@ -279,4 +304,4 @@ ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2),
 ############################
 ############################
 
-A VOUS DE JOUER
+#A VOUS DE JOUER
