@@ -381,15 +381,16 @@ plot.PCA(res.PCA,invisible=c('ind.sup'),cex=1.2,cex.main=1.2,cex.axis=1.2,label 
 On vous remet toutefois ci-dessous une proposition d'exploration telle que vue en séance.
 
 ## Charger les données
-```{r}
-#library(haven)
-# bug ici chez viviane si on rappelle pas haven
-# Et visiblement chez moi dans Rstudio
-# Mais pas dans vscode ???
-# TODO: check pourquoi the what of the fuck
+<!--
+bug ici chez viviane si on rappelle pas haven
+Et visiblement chez moi dans Rstudio
+Mais pas dans vscode ???
+TODO: check pourquoi the what of the fuck -->
 
+```{r}
 # ici haven est utilisé pour lire le fichier .dta
-# (déjà chargé plus haut)
+# (déjà chargé plus haut, si un bug se produit vous pouvez recharger le package :)
+# library(haven) # Décommenter si besoin
 epices <- read_dta("data/EX3_Epices.dta")
 head(epices)
 ```
