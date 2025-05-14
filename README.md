@@ -1,12 +1,16 @@
 # Atelier méthodes AGD
 
 ## Work in progress
+
 Ce repo est en cours de construction suite à la séance. Il sera actualisé au fil de l'eau.
 
 Vous retrouverez ici les matériaux utilisés durant la séance de l'Atelier Méthodes du CED consacrée à l'analyse géométrique des données multidimensionnelles.  
-L'annonce de l'atelier peut être retrouvée [ici](https://www.centreemiledurkheim.fr/evenements/atelier-methodes/usages-avances-de-lanalyse-geometrique-des-donnees-multidimensionnelles/)
+L'annonce de l'atelier peut être retrouvée [ici](https://www.centreemiledurkheim.fr/evenements/atelier-methodes/usages-avances-de-lanalyse-geometrique-des-donnees-multidimensionnelles/).
+
+Vous pouvez récupérer le dossier et l'ensemble des fichiers en cliquant sur le bouton vert "Code" > Download ZIP
 
 ## Contenu
+
 Ce repo contient :
 
 - les diapo utilisées pendant la séance
@@ -17,12 +21,14 @@ Ce repo contient :
 NB : des éléments de syntaxe de R peuvent être retrouvés ici : <https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf>
 
 ## Installer R et RStudio
+
 R :  https://cran.r-project.org/
 RStudio : https://www.rstudio.com/
 
 Besoin d’un tutoriel ? Rendez-vous ici : https://quanti.hypotheses.org/1813
 
 ## Installation des packages
+
 Les packages utilisés pour réaliser l'analyse sont détaillées dans le notebook et le script R de la séance.
 
 Pour simplifier l'installation, il est possible de :
