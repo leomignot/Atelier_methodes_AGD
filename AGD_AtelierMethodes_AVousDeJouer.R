@@ -130,7 +130,6 @@ p +
   ) 
 
 #ACP dans Factoshiny
-# script en commentaire pour qu'il ne s'exécute pas dans le notebook
 # acp <- Factoshiny(ex1)
 
 #ACP avec FactomineR
@@ -152,14 +151,11 @@ plot.PCA(res.PCA,invisible=c('ind','ind.sup'),select='contrib  95',cex=0.5,
 # Ouverture fichier
 safi <- read_excel("data/EX2_ACP_MirnaSAFI_Extract.xls")
 View(safi)
-
 summary(safi)
+
 # Factoshiny
 #acp <- Factoshiny(safi)
 
-# FactoMineR
-library(FactoMineR)
-library(factoextra)
 # graphiques initiaux réalisés dans Factoshiny
 res.PCA<-PCA(safi,quali.sup=c(6),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
@@ -179,16 +175,21 @@ dimdesc(res.PCA)
 
 # A VOUS DE JOUER
 
-#install.packages("haven")
-library(haven)
+########
+# Rapide proposition de code durant la séance :
+########
+
+# ici haven est utilisé pour lire le fichier .dta
+# (déjà chargé plus haut)
 mayer <- read_dta("data/EX3_Epices.dta")
 mayer
 
-Factoshiny(mayer)
+# Factoshiny(mayer)
 
 res.PCA<-PCA(mayer,quanti.sup=c(1,2,3,4,10,12,13,14,15,16,17,18,19,20,21,22),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
 plot.PCA(res.PCA,cex=0.95,cex.main=0.95,cex.axis=0.95)
+
 summary(res.PCA)
 
 ############################
@@ -302,3 +303,7 @@ ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2),
 ############################
 
 #A VOUS DE JOUER
+
+####
+# pas fait durant la séance
+####
