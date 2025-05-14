@@ -113,10 +113,8 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 # library(sf)
 # library(questionr)
 
-# TODO: vérif mais installé et chargé par défaut non ?
-# Peut virer pour nettoyer ?
-#library(stats)
-#library(base)
+# On utilise aussi les packages "base" et "stats"
+# mais ils sont chargés par défaut
 ```
 
 # Exemple 1 : Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP

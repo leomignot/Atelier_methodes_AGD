@@ -15,6 +15,7 @@ packages <- c(
   "sf",
   "questionr"
 )
+# also using "base" and "stats" packages but they come vanilla and are loaded by default
 
 # Install 
 installed <- packages %in% rownames(installed.packages())

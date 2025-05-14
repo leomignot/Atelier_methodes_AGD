@@ -1,44 +1,55 @@
 ############################
+#Initialisation des packages
+############################
+
+# ici on peut gagner du temps avec le recours au requirements.R
+# cf mail mickael (fichier actualisé depuis)
+source("requirements.R")
+
+# ou bien on peut faire à la main
+# c'est décrit ci-dessous
+
+
+############################
 #Installation des packages utiles
 ############################
-#install.packages("Factoshiny")
-#install.packages("FactoMineR")
-#install.packages("shiny")
-#install.packages("ggplot2") 
-#install.packages("FactoInvestigate") 
-#install.packages("ggpp")
-#install.packages("dplyr") 
-#install.packages("ggpmisc")
-#install.packages("readxl")
-#install.packages("ggrepel")
-#install.packages("haven")
+# install.packages("Factoshiny")
+# install.packages("FactoMineR")
+# install.packages("shiny")
+# install.packages("ggplot2") 
+# install.packages("FactoInvestigate") 
+# install.packages("ggpp")
+# install.packages("dplyr") 
+# install.packages("ggpmisc")
+# install.packages("readxl")
+# install.packages("ggrepel")
+# install.packages("haven")
 # install.packages("GDAtools")
 # install.packages("sf")
 # install.packages("questionr")
-
-##Vérif à ajouter
 
 
 ############################
 #Chargement de ces packages utiles
 ############################
-library(FactoMineR)
-library(shiny)
-library(FactoInvestigate)
-library(ggplot2)
-library(Factoshiny)
-library(ggpp)
-library(dplyr)
-library(ggpmisc)
-library(readxl)
-library(ggrepel)
-library(GDAtools)
-library(sf)
-library(questionr)
-library(haven)
-# Vérif si de base ou si besoin ajout dans requirements :
-library(stats)
-library(base)
+# library(FactoMineR)
+# library(shiny)
+# library(FactoInvestigate)
+# library(ggplot2)
+# library(Factoshiny)
+# library(ggpp)
+# library(dplyr)
+# library(ggpmisc)
+# library(readxl)
+# library(ggrepel)
+# library(GDAtools)
+# library(sf)
+# library(questionr)
+# library(haven)
+
+# On utilise aussi les packages "base" et "stats"
+# mais ils sont chargés par défaut
+
 
 ############################
 ############################
