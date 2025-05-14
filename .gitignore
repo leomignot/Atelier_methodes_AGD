@@ -12,7 +12,7 @@
 
 # Keep the directory structure but ignore all files
 # in the data directory
-data/*
+data/* 
 !data/.gitkeep
 
 # Python/Jupyter Artifacts
