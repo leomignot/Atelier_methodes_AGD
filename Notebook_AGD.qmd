@@ -46,6 +46,8 @@ Les exemples que nous utiliserons ici sont tirés de la littérature académique
 - ACM : Duval Julien, 2006, « L'art du réalisme. Le champ du cinéma français au début des années 2000 », *Actes de la recherche en sciences sociales,* 161-162 : 96-115
 - ACM : Le Hay Viviane, Vedel Thierry et Chanvril Flora, 2011 « Usage des médias et politique : une écologie des pratiques informationnelles », *Réseaux*, (170) : 46-73.
 
+NB : des éléments de syntaxe de R peuvent être retrouvés ici : <https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf>
+
 # Préalables : installer et charger les packages
 
 *Dans notre cas, il est possible de simplifier l'installation et le chargement des packages en faisant appel au fichier requirements.R qui liste l'ensemble des éléments nécessaires.* 

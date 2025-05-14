@@ -13,7 +13,9 @@ Ce repo contient :
 - les diapo utilisées pendant la séance
 - le notebook (`Notebbok_AGD.qmd`) mis à jour et détaillant les manipulations
 - le script (`AGD_AtelierMethodes_AVousDeJouer.R`) correspondant
-> ⚠️ les données précédemment fournies doivent être ajoutées dans un sous-dossier nommé `data` afin que les chemins de fichier correspondent.
+- ⚠️ les données précédemment fournies doivent être ajoutées dans un sous-dossier nommé `data` afin que les chemins de fichier correspondent.
+
+NB : des éléments de syntaxe de R peuvent être retrouvés ici : <https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf>
 
 ## Installer R et RStudio
 R :  https://cran.r-project.org/
