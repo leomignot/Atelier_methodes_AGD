@@ -205,6 +205,8 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 
 Dans le script ci-dessous, c'est ce que signifie : [==\> p \<-]{style="color: #C514D7;"}
 
+<!-- TODO: On pourrait pinailler et désormais utiliser le pipe natif ? -->
+
 ```{r, message=TRUE, warning=TRUE, echo=TRUE, fig.width=8, fig.height=6}
 
 # Identifier les points extrêmes à annoter (par exemple sur Y)
