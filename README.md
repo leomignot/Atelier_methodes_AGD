@@ -1,8 +1,15 @@
 # Atelier méthodes AGD
 
-Vous retrouverez ici les matériaux utilisés durant la séance de l'Atelier Méthodes du CED consacrée à l'analyse géométrique des données multidimensionnelles.
-
+Vous retrouverez ici les matériaux utilisés durant la séance de l'Atelier Méthodes du CED consacrée à l'analyse géométrique des données multidimensionnelles.  
 L'annonce de l'atelier peut être retrouvée [ici](https://www.centreemiledurkheim.fr/evenements/atelier-methodes/usages-avances-de-lanalyse-geometrique-des-donnees-multidimensionnelles/)
+
+## Contenu
+Ce repo contient :
+
+- les diapo utilisées pendant la séance
+- le notebook (`Notebbok_AGD.qmd`) mis à jour et détaillant les manipulations
+- le script (`AGD_AtelierMethodes_AVousDeJouer.R`) correspondant
+> ⚠️ les données précédemment fournies doivent être ajoutées dans un sous-dossier nommé `data` afin que les chemins de fichier correspondent.
 
 ## Installer R et RStudio
 R :  https://cran.r-project.org/
