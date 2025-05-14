@@ -23,10 +23,10 @@ NB : des éléments de syntaxe de R peuvent être retrouvés ici : <https://iqss
 
 ## Installer R et RStudio
 
-- R :  https://cran.r-project.org/
-- RStudio : https://www.rstudio.com/
+- R :  <https://cran.r-project.org/>
+- RStudio : <https://www.rstudio.com/>
 
-Besoin d’un tutoriel ? Rendez-vous ici : https://quanti.hypotheses.org/1813
+Besoin d’un tutoriel ? Rendez-vous ici : <https://quanti.hypotheses.org/1813>
 
 ## Installation des packages
 
