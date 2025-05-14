@@ -9,7 +9,8 @@ packages <- c(
   "dplyr",
   "ggpmisc",
   "ggrepel",
-  "readxl"
+  "readxl",
+  "haven"
 )
 
 # Install 
