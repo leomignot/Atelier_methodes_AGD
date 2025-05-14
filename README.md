@@ -1,5 +1,9 @@
 # Atelier méthodes AGD
 
+## Work in progress
+Ce repo est en cours de construction suite à la séance. Il sera actualisé au fil de l'eau.
+
+
 Vous retrouverez ici les matériaux utilisés durant la séance de l'Atelier Méthodes du CED consacrée à l'analyse géométrique des données multidimensionnelles.  
 L'annonce de l'atelier peut être retrouvée [ici](https://www.centreemiledurkheim.fr/evenements/atelier-methodes/usages-avances-de-lanalyse-geometrique-des-donnees-multidimensionnelles/)
 
