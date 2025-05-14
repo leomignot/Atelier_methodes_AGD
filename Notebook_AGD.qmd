@@ -9,10 +9,12 @@ format:
     theme: flatly
     highlight: tango
     code-fold: show
-    df-print: paged
-    fig-cap-location: bottom
+    # df-print: paged # si veut améliorer les sorties des df
+    # fig-cap-location: bottom
     fig-width: 7
     fig-height: 5
+    toc: true # table des matières
+    toc-depth: 2 # profondeur de la table
 
 # On verra plus tard pour le pdf
   # pdf:
@@ -27,33 +29,32 @@ format:
 ***Atelier Méthodes CED***
 :::
 
-<!-- TODO: revoir les numérotations des étapes et les niveuax hiérarchiques -->
+<!-- TODO: revoir les numérotations des étapes et les niveaux hiérarchiques -->
 
+# Objectifs
 Ce document détaille pas à pas les étapes de réalisation des analyses géométriques les plus simples quand on débute dans l'application de cette méthode avec R studio :
 
--   Analyse en composantes principales (ACP)
--   Analyse des correspondances multiples (ACM)
--   Analyse des correspondances multiples spécifiques (ACM spé)
+- Analyse en composantes principales (ACP)
+- Analyse des correspondances multiples (ACM)
+- Analyse des correspondances multiples spécifiques (ACM spé)
 
 
 Les exemples que nous utiliserons ici sont tirés de la littérature académique (avec accès aux données utilisées par leurs auteur/ices) :
 
--   ACP : Mayer Nonna, 2013, « Les effets politiques de la crise. Le vote des personnes pauvres et précaires en 2012 », *Informations sociales*, 180(6) : 52-59.
-
--   ACP : Safi Mirna, 2006, « Le processus d’intégration des immigrés en France : inégalités et segmentation », *Revue française de sociologie*, 47(1) : 3-48.
-
--   ACM: Duval Julien, 2006, « L'art du réalisme. Le champ du cinéma français au début des années 2000 », *Actes de la recherche en sciences sociales,* 161-162 : 96-115
-
--   ACM : Le Hay Viviane, Vedel Thierry et Chanvril Flora, 2011 « Usage des médias et politique : une écologie des pratiques informationnelles », Réseaux, (170) : 46-73.
+- ACP : Mayer Nonna, 2013, « Les effets politiques de la crise. Le vote des personnes pauvres et précaires en 2012 », *Informations sociales*, 180(6) : 52-59.
+- ACP : Safi Mirna, 2006, « Le processus d’intégration des immigrés en France : inégalités et segmentation », *Revue française de sociologie*, 47(1) : 3-48.
+- ACM : Duval Julien, 2006, « L'art du réalisme. Le champ du cinéma français au début des années 2000 », *Actes de la recherche en sciences sociales,* 161-162 : 96-115
+- ACM : Le Hay Viviane, Vedel Thierry et Chanvril Flora, 2011 « Usage des médias et politique : une écologie des pratiques informationnelles », *Réseaux*, (170) : 46-73.
 
 # Préalables : installer et charger les packages
 
-*Dans notre cas, il est possible de simplifier l'installation et le chargement des packages en faisant appel au fichier requirements.R qui liste l'ensemble des éléments nécessaires :*
+*Dans notre cas, il est possible de simplifier l'installation et le chargement des packages en faisant appel au fichier requirements.R qui liste l'ensemble des éléments nécessaires.* 
+*(À condition qu'il soit bien dans le dossier depuis lequel vous exécutez votre code R)*
 
 ```{r}
 #| echo: true
 #| results: hide
-#| message: false
+#| message: false # éviter d'avoir la sortie moche des messages
 source("requirements.R")
 ```
 
@@ -64,9 +65,11 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 > script pour chaque package : [install.packages("NomPackage")]{style="color: green;"}
 
 **Liste des packages les plus utiles** pour ce qui nous concerne :
+<!--TODO: affiner la liste selon ce qu'on a ajouté et ne mettre que les essentiels en exergue ici ?-->
 
--   *AGD* : Factoshiny, FactoMineR, FactoInvestigate,
--   *Visualisation de graphes* : ggplot2, shiny, ggpmisc, dplyr
+-   *AGD* : Factoshiny, FactoMineR, FactoInvestigate, GDAtools
+-   *Visualisation de graphes* : ggplot2, ggpmisc, ggrepel
+-   *Manipulation* : dplyr
 
 <!--TODO: COMPLÉTER la liste selon ce qu'on a ajouté-->
 
@@ -114,42 +117,48 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 #library(base)
 ```
 
-# Exemple 1 - Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP
+# Exemple 1 : Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP
 
 ::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
 **Un mini jeu de données à 2 variables continues**  
 --\> Taux de chômage en France 2000 / 2007 (données OCDE)
 :::
 
-## Etape 1 : Import & vérification du fichier dans R (statistiques descriptives)
+## Import & vérification du fichier dans R (statistiques descriptives)
 
 Opération possible *via* le menu déroulant de Rstudio (le fichier est dans cet exemple au [format excel]{style="color: #C514D7;"}) :
 
 > File --\> Import Dataset --\> From Excel
 
+Ou sinon directement en code en exécutant la commande suivante :
 ```{r}
 # ici il faut possiblement adapter le chemin à sa propre arborescence
 ex1 <- read_excel("data/EX1_DonneesOCDE_Base2.xls")
-# View(ex1)
+```
+
+[ex1]{style="color: red;"} = c'est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple. Vous pouvez tout aussi bien l'appeler 'fraise' si vous le souhaitez – vous l'écrivez alors ainsi dans le script :
+
+`fraise <- read_excel("ex5b-trivial-acp.xls")`
+
+NB : Il est plus simple de choisir un nom court, facile à manipuler.
+
+Je peux ensuite visualiser mon fichier avec `View()` ou afficher les premiers éléments avec `head()` :
+```{r}
+# View(ex1) # Décommenter cette ligne pour utiliser view
+
 # view vous sera utile dans Rstudio ou équivalent
 # mais comme il ouvre un autre objet, on se contente ici d'afficher
 # les premières lignes du fichier avec head()
 head(ex1)
 ```
 
-[ex1]{style="color: red;"} = c'est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple (vous pouvez l'appeler 'fraise' si vous le souhaitez : alors vous l'écrivez ainsi dans le script :
-
-`fraise <- read_excel("ex5b-trivial-acp.xls")`
-
-NB : Il est plus simple de choisir un nom court, facile à manipuler.
-
 ### Statistiques descriptives (variables continues)
-
+Je peux également afficher les principales stats (min, max, médiane, moyenne, quartiles) avec `summary()`
 ```{r}
 summary(ex1)
 ```
 
-## Etape 2 : Visualisation du nuage de points des variables initiales
+## Visualisation du nuage de points des variables initiales
 
 ```{r}
 ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
@@ -194,9 +203,7 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 
 [==\> J'appelle ce graphe intermédiaire "p"]{style="color: #C514D7;"}
 
-Dans le script ci-dessous, c'est ce que signifie :
-
-[==\> p \<-]{style="color: #C514D7;"}
+Dans le script ci-dessous, c'est ce que signifie : [==\> p \<-]{style="color: #C514D7;"}
 
 ```{r, message=TRUE, warning=TRUE, echo=TRUE, fig.width=8, fig.height=6}
 
@@ -237,7 +244,7 @@ p <- ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 print(p)
 ```
 
-### Ajout de la Droite de régression au graphe "p" déjà construit
+### Ajout de la droite de régression au graphe "p" déjà construit
 
 ```{r, message=FALSE, warning=FALSE}
 library(ggpmisc)
@@ -255,7 +262,7 @@ p +
   ) 
 ```
 
-### facultatif : ACP dans Factoshiny
+## Facultatif : ACP dans Factoshiny
 
 Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
 
@@ -280,6 +287,7 @@ On peut ensuite le copier-coller dans la console R :
 -   [x] Quit the app
 </center>
 
+On peut ensuite reproduire le code créé par Factoshiny dans R :
 ```{r}
 res.PCA<-PCA(ex1,quali.sup=c(1),quanti.sup=c(4,5),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
@@ -287,7 +295,9 @@ plot.PCA(res.PCA,invisible=c('ind','ind.sup'),select='contrib  95',cex=0.5,cex.m
 ```
 
 ```{r}
-summary(res.PCA)
+# Affichage des infos résumées 
+# Ici on éviter pour alléger le notebook
+# summary(res.PCA)  # Décommenter si besoin
 
 ```
 
@@ -295,16 +305,17 @@ summary(res.PCA)
 TODO: vérif ici, tu avais un dimdesc(res.PCA) qui plante :
 Error in `if (sum(tabF[, 2] <= proba) > 0) ...`:
 ! missing value where TRUE/FALSE needed
+
+j'ai viré en attendant de savoir ce que c'était/pourquoi ça foire
 -->
 
-# Exemple 2 - ACP - Article M. Safi
+# Exemple 2 : ACP article M. Safi
 
-## Etape 3 : Import & vérification du fichier dans R
+## Import & vérification du fichier dans R
 
-(Opération également possible via le menu déroulant de Rstudio)
+Comme vu précédemment, il est possible de charger les données via le menu déroulant de Rstudio. Ci-dessous, on passe plutôt par des lignes de code.
 
-<!-- TODO: amender cette partie tu as du changer le type du fichier
-ancien passage : "
+<!-- TODO: ici j'ai amendé la partie car tu as du changer le type du fichier. J'ai donc reforumlé et suprimé ça de l'ancien passage : "
 (le fichier est dans cet exemple au format STATA (extension .dta) ) :
 
 > File --\> Import Sataset --\> From Stata
@@ -322,68 +333,234 @@ head(safi)
 Statistiques descriptives (variables continues) :
 
 ```{r}
-summary(safi)
-#desc(safi) # Error in xtfrm.data.frame(x) : cannot xtfrm data frames
-# TODO: verif
+# Afficher les infos résumées
+# Ici on évite pour alléger le notebook
+# summary(safi)  # Décommenter si besoin
 ```
 
-## Etape 4 facultatif : ACP dans Factoshiny
+## Facultatif : ACP dans Factoshiny
 
-<!-- ICI SANS DOUTE REPRENDRE CAR DÉJÀ PRÉSENTÉ PLUS HAUT ? -->
-Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
+<!-- TODO: ICI SANS DOUTE REPRENDRE CAR DÉJÀ PRÉSENTÉ PLUS HAUT ?
+J'ai fait un premier passage, tu me diras si ça te va-->
+Comme vu précédemment, Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
 
 ```{r}
 # script en commentaire pour qu'il ne s'exécute pas dans le notebook
 # acp <- Factoshiny(safi)
 ```
 
-Dès lors que l'on est dans Factoshiny, on peut cocher :
+[***ATTENTION***]{style="color: purple;"} - [Penser à cliquer sur "[x] Quit the app" pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge)]{style="color: purple;"}
 
--   [x] Get the PCA code
-
-Il devient possible de le copier-coller dans la console R :
-
-1.  pour garder la trace de ce que l'on a fait
-
-2.  pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny
-
-[***ATTENTION***]{style="color: purple;"} - [Pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge), il ne faut pas oublier de cliquer sur :]{style="color: purple;"}
-
--   [x] Quit the app
-
+## Réaliser l'ACP
 ```{r}
 # graphiques initiaux réalisés dans Factoshiny
 res.PCA<-PCA(safi,quali.sup=c(6),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
+
+# Colorier les individus selon le pays
 plot.PCA(res.PCA,invisible=c('ind.sup'),habillage=6,cex=0.8,cex.main=0.8,cex.axis=0.8,label =c('quali', cex = 3, col = "black"))
 
+# Afficher les barycentres des modalités de variable supplémentaire pays
+# (possible de peauffiner pour avoir un résultat plus satisfaisant)
 plot.PCA(res.PCA,invisible=c('ind.sup'),cex=1.2,cex.main=1.2,cex.axis=1.2,label =c('quali'))
 
-summary(res.PCA)
-dimdesc(res.PCA)
+# Afficher les résumés et détails 
+# Ici on ne lance pas pour alléger le notebook
+# summary(res.PCA) # Décommenter si besoin
+# dimdesc(res.PCA) # Décommenter si besoin
 ```
 
-### Exemple 3 - ACP - Score Epices (N. Mayer)
+# Exemple 3 : ACP N. Mayer (epices) 
 
 ::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
-<strong>**A VOUS DE JOUER !!**</strong>
+**A VOUS DE JOUER !!**
 :::
 
+On vous remet toutefois ci-dessous une proposition d'exploration telle que vue en séance.
+
+## Charger les données
 ```{r}
 #library(haven)
 # bug ici chez viviane si on rappelle pas haven
 # Et visiblement chez moi dans Rstudio
 # Mais pas dans vscode ???
-# TODO:check pourquoi the what of the fuck
+# TODO: check pourquoi the what of the fuck
 
+# ici haven est utilisé pour lire le fichier .dta
+# (déjà chargé plus haut)
 epices <- read_dta("data/EX3_Epices.dta")
 head(epices)
+```
 
-# Factochiny
-#acp <- Factoshiny(epices)
+## Facultatif : aller dans Factoshiny
+```{r}
 
-res.PCA<-PCA(epices,quanti.sup=c(1,2,3,4),graph=FALSE)
+# Décommenter la ligne du dessou si l'on veut manipuler dans Factochiny :
+# acp <- Factoshiny(epices)
+```
+
+## Faire l'ACP
+
+```{r}
+# Réaliser l'ACP
+res.PCA<-PCA(epices,quanti.sup=c(1,2,3,4,10,12,13,14,15,16,17,18,19,20,21,22),graph=FALSE)
+
+# Sortir une représentation graphique
 plot.PCA(res.PCA,choix='var',cex=0.75,cex.main=0.75,cex.axis=0.75,
          col.quanti.sup='#0000FF')
 plot.PCA(res.PCA)
+
+# Sortir les stats (ici on éviter pour alléger le notebook) :
+# summary(res.PCA) # Décommenter si besoin
+# dimdesc(res.PCA) # Décommenter si besoin
 ```
+
+# Exemple 4 : ACM Julien DUVAL (Cinéma)
+
+::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
+**A VOUS DE JOUER !!**
+:::
+
+## Pour aller plus loin
+Pour l'ACM, on suggère de faire les graphes dans R-Studio via le package GDAtool.
+
+Quelques ressources :
+
+- <https://cran.r-project.org/web/packages/GDAtools/GDAtools.pdf>
+- <https://nicolas-robette.github.io/GDAtools/articles/french/Tutoriel_AGD.html>
+
+
+On propose également ci-dessous une version rapide (et perfectible) du code vu durant la séance.
+
+## Faire l'ACM
+
+```{r}
+# Charger les données
+duval <- read_excel("data/EX4_Cinema_GDAtools.xlsx")
+
+# Faire l'ACM
+mca_duval<-MCA(duval,quanti.sup=c(1),quali.sup=c(17),graph=FALSE)
+
+# Sortir les stats
+# summary(mca_duval) # Décommenter si besoin
+# dimdesc(mca_duval) # Décommenter si besoin
+
+# Visualiser
+plot.MCA(mca_duval, choix='var',col.quali.sup='#006400')
+plot.MCA(mca_duval,invisible= 'ind',col.quali.sup='#006400',label =c('var','quali.sup'))
+```
+
+On peut également aller regarder les eigenvalues et les taux modifiés de Benzecri :
+```{r}
+mca_duval$eig
+modif.rate(mca_duval)
+```
+
+Ou encore aller vérifier les descriptions et contributions aux dimensions
+
+```{r}
+# # Décommenter si vous voulez la sortie
+# # ici on évite pour alléger le notebook
+# dimdescr(mca_duval, vars = NULL, dim = c(1,2),
+#          limit = NULL, correlation = "pearson",
+#          na.rm.cat = FALSE, na.value.cat = "NA", na.rm.cont = FALSE,
+#          nperm = NULL, distrib = "asympt",
+#          shortlabs = TRUE)
+# dimcontrib(mca_duval, dim = c(1,2), best = TRUE)
+```
+
+## Visualiser le nuage des individus
+
+```{r}
+# ici dans le plan 1-2 ==> axes = c(1,2)
+ggcloud_indiv(mca_duval, type = "i", points = "all", axes = c(1,2),
+              col = "dodgerblue4", point.size = 0.5, alpha = 0.6,
+              repel = FALSE, text.size = 2,
+              density = NULL, col.contour = "darkred", hex.bins = 50, 
+              hex.pal = "viridis" )  +
+  coord_fixed(ratio = 1) # fixer le ratio/proportion
+```
+
+Remarque : il est (très) utile d'avoir recours à `coord_fixed(ratio = 1)`afin de fixer le ratio des axes des X et Y et de conserver les proportions.
+
+## Visualiser le nuage des modalités
+
+### Nuage de TOUTES les modalités actives
+```{r}
+# nuage de TOUTES les modalités actives
+# toujours dans le plan 1-2
+# toutes les modalités : points = "all"
+ggcloud_variables(mca_duval, axes = c(1,2), points = "all",
+                  min.ctr = NULL, max.pval = 0.01, face = "pp",
+                  shapes = TRUE, prop = NULL, textsize = 3, shapesize = 3,
+                  col = NULL, col.by.group = TRUE, alpha = 1,
+                  segment.alpha = 0.5, vlab = FALSE, legend = "right",
+                  force = 1, max.overlaps = Inf) +
+  coord_fixed(ratio = 1)
+```
+
+### Nuage des modalités actives qui contribuent à l'axe horizontal
+
+```{r}
+# Nuage des modalités actives qui contribuent à l'axe horizontal
+# toujours dans le plan 1-2
+# toutes les modalités : points = "besth"
+ggcloud_variables(mca_duval, axes = c(1,2), points = "besth",
+                  min.ctr = NULL, max.pval = 0.01, face = "pp",
+                  shapes = TRUE, prop = NULL, textsize = 3, shapesize = 3,
+                  col = NULL, col.by.group = TRUE, alpha = 1,
+                  segment.alpha = 0.5, vlab = FALSE, legend = "right",
+                  force = 1, max.overlaps = Inf)+
+  coord_fixed(ratio = 1)
+```
+
+### Nuage des modalités actives qui contribuent à l'axe vertical
+
+```{r}
+# Nuage des modalités actives qui contribuent à l'axe vertical
+# toujours dans le plan 1-2
+# toutes les modalités : points = "bestv"
+ggcloud_variables(mca_duval, axes = c(1,2), points = "bestv",
+                  min.ctr = NULL, max.pval = 0.01, face = "pp",
+                  shapes = TRUE, prop = NULL, textsize = 3, shapesize = 3,
+                  col = NULL, col.by.group = TRUE, alpha = 1,
+                  segment.alpha = 0.5, vlab = FALSE, legend = "right",
+                  force = 1, max.overlaps = Inf)+
+  coord_fixed(ratio = 1)
+```
+
+### Nuage des modalités actives qui contribuent aux 2 axes
+
+```{r}
+# Nuage des modalités actives qui contribuent aux 2 axes
+# toujours dans le plan 1-2
+# toutes les modalités : points = "besthv"
+ggcloud_variables(mca_duval, axes = c(1,2), points = "besthv",
+                       min.ctr = NULL, max.pval = 0.01, face = "pp",
+                       shapes = TRUE, prop = NULL, textsize = 3, shapesize = 3,
+                       col = NULL, col.by.group = TRUE, alpha = 1,
+                       segment.alpha = 0.5, vlab = FALSE, legend = "right",
+                       force = 1, max.overlaps = Inf)+
+  coord_fixed(ratio = 1)
+```
+
+### Superposition de variables supplémentaires 'au compte-gouttes'
+
+```{r}
+# Superposition de variables supplémentaires 'au compte-gouttes'
+# ici WW
+duval$WW <- as.factor(duval$WW)
+freq(duval$WW)
+ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2), 
+             col = "black", shape = 1, prop = NULL, 
+             textsize = 3, shapesize = 6,
+             segment = FALSE, vname = NULL)
+```
+
+# Exemple 5 : ACM spécifique médiapolis (pas fait en séance)
+
+::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
+**A VOUS DE JOUER !!**
+:::
+
+<!-- # tabcontrib(mca_duval, dim = 1) #nope, seulement sur ACM spé ? -->

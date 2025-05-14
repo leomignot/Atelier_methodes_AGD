@@ -181,12 +181,12 @@ dimdesc(res.PCA)
 
 # ici haven est utilisé pour lire le fichier .dta
 # (déjà chargé plus haut)
-mayer <- read_dta("data/EX3_Epices.dta")
-mayer
+epices <- read_dta("data/EX3_Epices.dta")
+epices
 
-# Factoshiny(mayer)
+# Factoshiny(epices)
 
-res.PCA<-PCA(mayer,quanti.sup=c(1,2,3,4,10,12,13,14,15,16,17,18,19,20,21,22),graph=FALSE)
+res.PCA<-PCA(epices,quanti.sup=c(1,2,3,4,10,12,13,14,15,16,17,18,19,20,21,22),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
 plot.PCA(res.PCA,cex=0.95,cex.main=0.95,cex.axis=0.95)
 
@@ -222,7 +222,7 @@ plot.MCA(mca_duval,invisible= 'ind',col.quali.sup='#006400',label =c('var','qual
 
 mca_duval$eig
 modif.rate(mca_duval)
-tabcontrib(mca_duval, dim = 1) #nope, sur ACM spé ?
+#tabcontrib(mca_duval, dim = 1) #nope, sur ACM spé ?
 dimdescr(mca_duval, vars = NULL, dim = c(1,2),
          limit = NULL, correlation = "pearson",
          na.rm.cat = FALSE, na.value.cat = "NA", na.rm.cont = FALSE,
@@ -291,7 +291,7 @@ freq(duval$WW)
 ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2), 
              col = "black", shape = 1, prop = NULL, 
              textsize = 3, shapesize = 6,
-             segment = FALSE, vname = NULL )
+             segment = FALSE, vname = NULL)
 
 
 
