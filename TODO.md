@@ -12,6 +12,7 @@
 - vérifier le flow global
 - préciser certains éléments pour clarifier ? ou laisser en l'état pour l'instant dans cette première version, après tout on a assisté à la séance > j'ai déjà fait quelques ajouts
 - aviser pour compléter le notebook avec le reste (ACM, ACM spé ?) et les éléments du script ? > j'ai fait un premier passage, voir ce que Viviane en pense et aviser.
+- AJOUT DES DIAPOS
 
 ## Forme
 
