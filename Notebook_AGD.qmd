@@ -2,26 +2,32 @@
 title: "Pratiques avancées de l'analyse géométrique des données"
 author: "Viviane LE HAY"
 date: "2025/05/13"
-output:
-  html_document:
+
+format:
+  html:
+    embed-resources: true
     theme: flatly
     highlight: tango
-    code_folding: show
-    df_print: paged
-    fig_caption: true
-    fig_width: 7
-    fig_height: 5
-  pdf_document:
-    fig_caption: true
-    fig_width: 7
-    fig_height: 5
+    code-fold: show
+    df-print: paged
+    fig-cap-location: bottom
+    fig-width: 7
+    fig-height: 5
+
+# On verra plus tard pour le pdf
+  # pdf:
+  #   fig-cap-location: bottom
+  #   fig-width: 7
+  #   fig-height: 5
+
+
 ---
 
 ::: {style="text-align: center;"}
 ***Atelier Méthodes CED***
-
-***Viviane LE HAY - Mai 2025***
 :::
+
+<!-- TODO: revoir les numérotations des étapes et les niveuax hiérarchiques -->
 
 Ce document détaille pas à pas les étapes de réalisation des analyses géométriques les plus simples quand on débute dans l'application de cette méthode avec R studio :
 
@@ -42,8 +48,6 @@ Les exemples que nous utiliserons ici sont tirés de la littérature académique
 
 # Préalables : installer et charger les packages
 
-<!--TODO : ajouter la possibilité de juste sourcer avec la solution mickael-->
-
 *Dans notre cas, il est possible de simplifier l'installation et le chargement des packages en faisant appel au fichier requirements.R qui liste l'ensemble des éléments nécessaires :*
 
 ```{r}
@@ -59,12 +63,12 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 
 > script pour chaque package : [install.packages("NomPackage")]{style="color: green;"}
 
-**Liste des packages utiles** pour ce qui nous concerne :
+**Liste des packages les plus utiles** pour ce qui nous concerne :
 
 -   *AGD* : Factoshiny, FactoMineR, FactoInvestigate,
 -   *Visualisation de graphes* : ggplot2, shiny, ggpmisc, dplyr
 
-<!--TODO : COMPLÉTER la liste selon ce qu'on a ajouté-->
+<!--TODO: COMPLÉTER la liste selon ce qu'on a ajouté-->
 
 ```{r}
 #install.packages("Factoshiny")
@@ -75,7 +79,8 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 #install.packages("ggpp")
 #install.packages("dplyr") 
 #install.packages("ggpmisc")
-#install.packages("dplyr")
+#install.packages("ggrepel")
+#install.packages("readxl")
 #install.packages("haven")
 
 ```
@@ -85,20 +90,22 @@ Exécuter la commande ci-dessus revient à installer les packages et les charger
 > script pour chaque package : [library("NomPackage")]{style="color: green;"}
 
 ```{r}
+library(Factoshiny)
 library(FactoMineR)
 library(shiny)
 library(ggplot2)
 library(FactoInvestigate)
-library(Factoshiny)
 library(ggpp)
 library(dplyr)
 library(ggpmisc)
-library(readxl)
-library(dplyr)
-library(stats)
-library(base)
 library(ggrepel)
+library(readxl)
 library(haven)
+
+# TODO: vérif mais installé et chargé par défaut non ?
+# Peut virer pour nettoyer ?
+#library(stats)
+#library(base)
 ```
 
 # Exemple 1 - Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP
@@ -117,13 +124,16 @@ Opération possible *via* le menu déroulant de Rstudio (le fichier est dans cet
 ```{r}
 # ici il faut possiblement adapter le chemin à sa propre arborescence
 ex1 <- read_excel("data/EX1_DonneesOCDE_Base2.xls")
-# View(ex1) # view vous sera utile dans Rstudio ou équivalent, mais comme il ouvre un autre objet on se contente ici d'afficher les premières lignes du fichier
+# View(ex1)
+# view vous sera utile dans Rstudio ou équivalent
+# mais comme il ouvre un autre objet, on se contente ici d'afficher
+# les premières lignes du fichier avec head()
 head(ex1)
 ```
 
 [ex1]{style="color: red;"} = c'est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple (vous pouvez l'appeler 'fraise' si vous le souhaitez : alors vous l'écrivez ainsi dans le script :
 
-`fraise <- read_excel("ex5b-trivial-acp.xls"`
+`fraise <- read_excel("ex5b-trivial-acp.xls")`
 
 NB : Il est plus simple de choisir un nom court, facile à manipuler.
 
@@ -131,7 +141,6 @@ NB : Il est plus simple de choisir un nom court, facile à manipuler.
 
 ```{r}
 summary(ex1)
-head(ex1)
 ```
 
 ## Etape 2 : Visualisation du nuage de points des variables initiales
@@ -152,7 +161,8 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 ::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #F4F5EE;"}
 **Dico script R**
 
--   geom_point : taille et couleur des points - geom_text : label et ajustement des points
+-   geom_point : taille et couleur des points
+-   geom_text : label et ajustement des points
 -   labs : titre du graphes et des axes
 
 **Trucs et astuces**
@@ -176,7 +186,7 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 
 ### Sélectionner certains points que l'on souhaite étiqueter (et pas les autres) : packages dplyr et ggpmisc
 
-[==\> J'appelle ce graphe intermédiaire "p"]{style="color: #C514D7;"})
+[==\> J'appelle ce graphe intermédiaire "p"]{style="color: #C514D7;"}
 
 Dans le script ci-dessous, c'est ce que signifie :
 
@@ -276,7 +286,7 @@ summary(res.PCA)
 ```
 
 <!--
-TODO : vérif ici, tu avais un dimdesc(res.PCA) qui plante :
+TODO: vérif ici, tu avais un dimdesc(res.PCA) qui plante :
 Error in `if (sum(tabF[, 2] <= proba) > 0) ...`:
 ! missing value where TRUE/FALSE needed
 -->
@@ -285,9 +295,9 @@ Error in `if (sum(tabF[, 2] <= proba) > 0) ...`:
 
 ## Etape 3 : Import & vérification du fichier dans R
 
-Opération possible via le menu déroulant de Rstudio
+(Opération également possible via le menu déroulant de Rstudio)
 
-<!-- TODO : amender cette partie tu as du changer le type du fichier
+<!-- TODO: amender cette partie tu as du changer le type du fichier
 ancien passage : "
 (le fichier est dans cet exemple au format STATA (extension .dta) ) :
 
@@ -308,11 +318,12 @@ Statistiques descriptives (variables continues) :
 ```{r}
 summary(safi)
 #desc(safi) # Error in xtfrm.data.frame(x) : cannot xtfrm data frames
-# TODO : verif
+# TODO: verif
 ```
 
-## Etape 4 -facultatif- : ACP dans Factoshiny
+## Etape 4 facultatif : ACP dans Factoshiny
 
+<!-- ICI SANS DOUTE REPRENDRE CAR DÉJÀ PRÉSENTÉ PLUS HAUT ? -->
 Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
 
 ```{r}
@@ -353,8 +364,11 @@ dimdesc(res.PCA)
 :::
 
 ```{r}
-library(haven) # bug ici si on rappelle pas haven
-# TODO :check pourquoi plante si rappelle pas haven. autre appel de lib entre temps qui écrase la focntion ?
+#library(haven)
+# bug ici chez viviane si on rappelle pas haven
+# Et visiblement chez moi dans Rstudio
+# Mais pas dans vscode ???
+# TODO:check pourquoi the what of the fuck
 
 epices <- read_dta("data/EX3_Epices.dta")
 head(epices)
