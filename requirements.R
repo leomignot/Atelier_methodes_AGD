@@ -8,7 +8,8 @@ packages <- c(
   "ggpp",
   "dplyr",
   "ggpmisc",
-  "ggrepel"
+  "ggrepel",
+  "readxl"
 )
 
 # Install 
