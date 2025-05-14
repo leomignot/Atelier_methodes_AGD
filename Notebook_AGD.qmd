@@ -551,12 +551,28 @@ ggcloud_variables(mca_duval, axes = c(1,2), points = "besthv",
 ```{r}
 # Superposition de variables supplémentaires 'au compte-gouttes'
 # ici WW
+
+# Step 1: on reprend le plot de base et on le stocke dans p
+p <- ggcloud_variables(mca_duval, axes = c(1,2), points = "besthv",
+                       min.ctr = NULL, max.pval = 0.01, face = "pp",
+                       shapes = TRUE, prop = NULL, textsize = 3, shapesize = 3,
+                       col = NULL, col.by.group = TRUE, alpha = 1,
+                       segment.alpha = 0.5, vlab = FALSE, legend = "right",
+                       force = 1, max.overlaps = Inf) +
+  coord_fixed(ratio = 1)
+
+# Step 2: prépa ajout des variables supplémentaires
 duval$WW <- as.factor(duval$WW)
 freq(duval$WW)
-ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2), 
-             col = "black", shape = 1, prop = NULL, 
-             textsize = 3, shapesize = 6,
-             segment = FALSE, vname = NULL)
+
+# ajout au plot existant
+p <- ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2), 
+                  col = "black", shape = 1, prop = NULL, 
+                  textsize = 3, shapesize = 6,
+                  segment = FALSE, vname = NULL)
+
+# Step 3: imprimer le plot modifié
+print(p)
 ```
 
 # Exemple 5 : ACM spécifique médiapolis (pas fait en séance)
