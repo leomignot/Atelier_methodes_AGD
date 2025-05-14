@@ -1,6 +1,7 @@
 ---
 title: "Pratiques avancées de l'analyse géométrique des données"
-Author: "mai 2025 - Viviane LE HAY"
+author: "Viviane LE HAY"
+date: "2025/05/13"
 output:
   html_document:
     theme: flatly
@@ -16,19 +17,18 @@ output:
     fig_height: 5
 ---
 
-<center>
-
+::: {style="text-align: center;"}
 ***Atelier Méthodes CED***
 
 ***Viviane LE HAY - Mai 2025***
-
-</center>
+:::
 
 Ce document détaille pas à pas les étapes de réalisation des analyses géométriques les plus simples quand on débute dans l'application de cette méthode avec R studio :
 
 -   Analyse en composantes principales (ACP)
 -   Analyse des correspondances multiples (ACM)
 -   Analyse des correspondances multiples spécifiques (ACM spé)
+
 
 Les exemples que nous utiliserons ici sont tirés de la littérature académique (avec accès aux données utilisées par leurs auteur/ices) :
 
@@ -40,19 +40,31 @@ Les exemples que nous utiliserons ici sont tirés de la littérature académique
 
 -   ACM : Le Hay Viviane, Vedel Thierry et Chanvril Flora, 2011 « Usage des médias et politique : une écologie des pratiques informationnelles », Réseaux, (170) : 46-73.
 
-    \newpage
+# Préalables : installer et charger les packages
 
-### Préalables : installation puis chargement des packages
+<!--TODO : ajouter la possibilité de juste sourcer avec la solution mickael-->
 
-#### **`Installation des packages utiles`**
+*Dans notre cas, il est possible de simplifier l'installation et le chargement des packages en faisant appel au fichier requirements.R qui liste l'ensemble des éléments nécessaires :*
+
+```{r}
+#| echo: true
+#| results: hide
+#| message: false
+source("requirements.R")
+```
+
+Exécuter la commande ci-dessus revient à installer les packages et les charger, processus sinon détaillé ci-dessous.
+
+## Installation des packages utiles
 
 > script pour chaque package : [install.packages("NomPackage")]{style="color: green;"}
 
 **Liste des packages utiles** pour ce qui nous concerne :
 
-*AGD* : Factoshiny, FactoMineR, FactoInvestigate,
+-   *AGD* : Factoshiny, FactoMineR, FactoInvestigate,
+-   *Visualisation de graphes* : ggplot2, shiny, ggpmisc, dplyr
 
-*Visualisation de graphes* : ggplot2, shiny, ggpmisc, dplyr
+<!--TODO : COMPLÉTER la liste selon ce qu'on a ajouté-->
 
 ```{r}
 #install.packages("Factoshiny")
@@ -62,74 +74,69 @@ Les exemples que nous utiliserons ici sont tirés de la littérature académique
 #install.packages("FactoInvestigate") 
 #install.packages("ggpp")
 #install.packages("dplyr") 
-#install.packages("ggpmisc") 
+#install.packages("ggpmisc")
+#install.packages("dplyr")
+#install.packages("haven")
+
 ```
 
-#### **`Chargement de ces packages utiles`**
+## Chargement des packages utiles
 
 > script pour chaque package : [library("NomPackage")]{style="color: green;"}
 
 ```{r}
-#library(FactoMineR)
-#library(shiny)
-#library(ggplot2)
-#library(FactoInvestigate)
-#library(Factoshiny)
-#library(ggpp)
-#library(dplyr)
-#library(ggpmisc)
+library(FactoMineR)
+library(shiny)
+library(ggplot2)
+library(FactoInvestigate)
+library(Factoshiny)
+library(ggpp)
+library(dplyr)
+library(ggpmisc)
+library(readxl)
+library(dplyr)
+library(stats)
+library(base)
+library(ggrepel)
+library(haven)
 ```
 
-\newpage
-
-### Exemple trivial - Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP
+# Exemple 1 - Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP
 
 ::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
-<strong>**Un mini jeu de données à 2 variables continues**</strong>
-
+**Un mini jeu de données à 2 variables continues**  
 --\> Taux de chômage en France 2000 / 2007 (données OCDE)
 :::
 
-#### `Etape 1 : Importation & vérification du fichier dans R (statistiques descriptives)`
+## Etape 1 : Import & vérification du fichier dans R (statistiques descriptives)
 
 Opération possible *via* le menu déroulant de Rstudio (le fichier est dans cet exemple au [format excel]{style="color: #C514D7;"}) :
 
 > File --\> Import Dataset --\> From Excel
 
-```{r ch1, echo=TRUE}
-library(readxl)
-# ici il faut adapter le chemin à sa propre arborescence
-ex1 <- read_excel("EX1_DonneesOCDE_Base2.xls")
-View(ex1)
+```{r}
+# ici il faut possiblement adapter le chemin à sa propre arborescence
+ex1 <- read_excel("data/EX1_DonneesOCDE_Base2.xls")
+# View(ex1) # view vous sera utile dans Rstudio ou équivalent, mais comme il ouvre un autre objet on se contente ici d'afficher les premières lignes du fichier
+head(ex1)
 ```
 
-[ex1]{style="color: red;"} = c'est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple (vous pouvez l'appeler 'fraise' si vous le souhaitez : alors vous l'écriver ainsi dans le script :
+[ex1]{style="color: red;"} = c'est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple (vous pouvez l'appeler 'fraise' si vous le souhaitez : alors vous l'écrivez ainsi dans le script :
 
-<center>[fraise]{style="color: red;"} \<- read_excel("ex5b-trivial-acp.xls"</center>
+`fraise <- read_excel("ex5b-trivial-acp.xls"`
 
 NB : Il est plus simple de choisir un nom court, facile à manipuler.
 
-\newpage
+### Statistiques descriptives (variables continues)
 
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-##### Statistiques descriptives (variables continues)
-
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-```{r ch2}
+```{r}
 summary(ex1)
 head(ex1)
 ```
 
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+## Etape 2 : Visualisation du nuage de points des variables initiales
 
-#### Etape 2 : Visualisation du nuage de points des variables initiales
-
-#### \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-```{r ch3}
-library(ggplot2)
+```{r}
 ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
   geom_point(color = "#EF6A40", size = 3) +
   geom_text(aes(label = id), hjust = -0.1, vjust = 0.5, size = 3) +
@@ -143,27 +150,19 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 ```
 
 ::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #F4F5EE;"}
-<strong>**Dico script R**</strong>
+**Dico script R**
 
-geom_point : taille et couleur des points
-
-geom_text : label et ajustement des points
-
-labs : titre du graphes et des axes
+-   geom_point : taille et couleur des points - geom_text : label et ajustement des points
+-   labs : titre du graphes et des axes
 
 **Trucs et astuces**
 
-lien pour les codes des couleurs : <https://htmlcolorcodes.com>
+-   lien pour les codes des couleurs : <https://htmlcolorcodes.com>
 :::
 
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+### Etiqueter sans chevauchement de labels : package ggrepel
 
-##### Etiqueter sans chevauchement de labels : package ggrepel
-
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-```{r ch4}
-library(ggrepel)
+```{r}
 ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
   geom_point(color = "steelblue", size = 3) +
   geom_text_repel(aes(label = id), size = 3, max.overlaps = Inf) +
@@ -175,9 +174,7 @@ ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
   )
 ```
 
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-##### Sélectionner certains points que l'on souhaite étiqueter (et pas les autres) : packages dplyr et ggpmisc
+### Sélectionner certains points que l'on souhaite étiqueter (et pas les autres) : packages dplyr et ggpmisc
 
 [==\> J'appelle ce graphe intermédiaire "p"]{style="color: #C514D7;"})
 
@@ -185,21 +182,7 @@ Dans le script ci-dessous, c'est ce que signifie :
 
 [==\> p \<-]{style="color: #C514D7;"}
 
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-```{r}
-#install.packages("dplyr")
-#library(dplyr)
-```
-
-```{r,  ch5 , message=TRUE, warning=TRUE, echo=TRUE, fig.width=8, fig.height=6}
-
-library(stats)
-library(base)
-library(ggplot2)
-library(ggrepel)
-library(dplyr)
-
+```{r, message=TRUE, warning=TRUE, echo=TRUE, fig.width=8, fig.height=6}
 
 # Identifier les points extrêmes à annoter (par exemple sur Y)
 points_a_annoter <- ex1 %>%
@@ -238,13 +221,9 @@ p <- ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
 print(p)
 ```
 
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+### Ajout de la Droite de régression au graphe "p" déjà construit
 
-##### Ajout de la Droite de régression au graphe "p" déjà construit
-
-\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
-
-```{r ch6, message=FALSE, warning=FALSE}
+```{r, message=FALSE, warning=FALSE}
 library(ggpmisc)
 # Nuage de points avec étiquettes seulement sur les points extrêmes
 # + ajout de la droite de régression avec geom_smooth
@@ -260,7 +239,7 @@ p +
   ) 
 ```
 
-#### **`Etape 4 (facultatif) :`** `ACP dans Factoshiny`
+### facultatif : ACP dans Factoshiny
 
 Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
 
@@ -270,31 +249,22 @@ Factoshiny permet de faire une exploration rapide du résultat de l'analyse géo
 ```
 
 Dès lors que l'on est dans Factoshiny, on peut cocher :
-
 <center>
-
 -   [x] Get the PCA code
-
-    </center>
-
+</center>
 Qui fournit le script associé aux opérations menées en click-bouton.
 
 On peut ensuite le copier-coller dans la console R :
-
-1.  pour garder la trace de ce que l'on a fait
-
-2.  pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny
+- pour garder la trace de ce que l'on a fait
+- pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny
 
 [***ATTENTION***]{style="color: purple;"} - [Pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge), il ne faut pas oublier de cliquer sur :]{style="color: purple;"}
 
 <center>
-
 -   [x] Quit the app
-
-    </center>
+</center>
 
 ```{r}
-library(FactoMineR)
 res.PCA<-PCA(ex1,quali.sup=c(1),quanti.sup=c(4,5),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
 plot.PCA(res.PCA,invisible=c('ind','ind.sup'),select='contrib  95',cex=0.5,cex.main=0.5,cex.axis=0.5,label =c('quali'))
@@ -302,29 +272,33 @@ plot.PCA(res.PCA,invisible=c('ind','ind.sup'),select='contrib  95',cex=0.5,cex.m
 
 ```{r}
 summary(res.PCA)
-#dimdesc(res.PCA)
+
 ```
 
-### Exemple 2 - ACP - Article M. Safi
+<!--
+TODO : vérif ici, tu avais un dimdesc(res.PCA) qui plante :
+Error in `if (sum(tabF[, 2] <= proba) > 0) ...`:
+! missing value where TRUE/FALSE needed
+-->
 
-### **`(Etape 3 :)`** `Importation & vérification du fichier dans R`
+# Exemple 2 - ACP - Article M. Safi
 
-Opération possible via le menu déroulant de Rstudio (
+## Etape 3 : Import & vérification du fichier dans R
 
-le fichier est dans cet exemple au format STATA (extension .dta) ) :
+Opération possible via le menu déroulant de Rstudio
+
+<!-- TODO : amender cette partie tu as du changer le type du fichier
+ancien passage : "
+(le fichier est dans cet exemple au format STATA (extension .dta) ) :
 
 > File --\> Import Sataset --\> From Stata
-
 ATTENTION:
+"
+-->
 
-```{r echo=TRUE}
-#library(haven) 
-# ici il faut adapter le chemin à sa propre arborescence
-#safi <- read_dta("EX2_ACP_MirnaSAFI_Extract.dta") 
-#View(safi)
-
-safi <- read_excel("EX2_ACP_MirnaSAFI_Extract.xls")
-View(safi)
+```{r}
+safi <- read_excel("data/EX2_ACP_MirnaSAFI_Extract.xls")
+head(safi)
 ```
 
 [safi]{style="color: red;"} = le nom qui servira à appeler le jeu de données dans R dans la suite de l'exercice.
@@ -333,16 +307,17 @@ Statistiques descriptives (variables continues) :
 
 ```{r}
 summary(safi)
-desc(safi)
+#desc(safi) # Error in xtfrm.data.frame(x) : cannot xtfrm data frames
+# TODO : verif
 ```
 
-#### **`(Etape 4 -facultatif- :)`** `ACP dans Factoshiny`
+## Etape 4 -facultatif- : ACP dans Factoshiny
 
 Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
 
 ```{r}
 # script en commentaire pour qu'il ne s'exécute pas dans le notebook
-acp <- Factoshiny(safi)
+# acp <- Factoshiny(safi)
 ```
 
 Dès lors que l'on est dans Factoshiny, on peut cocher :
@@ -360,7 +335,6 @@ Il devient possible de le copier-coller dans la console R :
 -   [x] Quit the app
 
 ```{r}
-library(FactoMineR)
 # graphiques initiaux réalisés dans Factoshiny
 res.PCA<-PCA(safi,quali.sup=c(6),graph=FALSE)
 plot.PCA(res.PCA,choix='var')
@@ -379,8 +353,11 @@ dimdesc(res.PCA)
 :::
 
 ```{r}
-epices <- read_dta("EX3_Epices.dta")
-View(epices)
+library(haven) # bug ici si on rappelle pas haven
+# TODO :check pourquoi plante si rappelle pas haven. autre appel de lib entre temps qui écrase la focntion ?
+
+epices <- read_dta("data/EX3_Epices.dta")
+head(epices)
 
 # Factochiny
 #acp <- Factoshiny(epices)
