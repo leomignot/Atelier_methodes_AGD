@@ -3,7 +3,6 @@
 ## Work in progress
 Ce repo est en cours de construction suite à la séance. Il sera actualisé au fil de l'eau.
 
-
 Vous retrouverez ici les matériaux utilisés durant la séance de l'Atelier Méthodes du CED consacrée à l'analyse géométrique des données multidimensionnelles.  
 L'annonce de l'atelier peut être retrouvée [ici](https://www.centreemiledurkheim.fr/evenements/atelier-methodes/usages-avances-de-lanalyse-geometrique-des-donnees-multidimensionnelles/)
 
@@ -30,5 +29,4 @@ Pour simplifier l'installation, il est possible de :
 
 1. télécharger le fichier requirements.R
 2. lancez R à partir du dossier où se trouve le document
-3. lancer la commande suivante dans la console R:
-    source("requirements.R")
+3. lancer la commande suivante dans la console R : `source("requirements.R")`
