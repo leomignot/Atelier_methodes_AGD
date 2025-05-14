@@ -1,0 +1,47 @@
+.DS_Store
+.env
+
+# Fichiers temporaires word/excel
+~$*
+
+# Data Files and Folders
+*.csv
+*.tsv
+*.xlsx
+*.xls
+data/
+
+# Python/Jupyter Artifacts
+__pycache__/
+*.py[cod]
+*.ipynb_checkpoints/
+
+# Environment and Config Files
+.env
+*.Renviron
+
+# VSCode Settings
+.vscode/
+
+### R ###
+# R History and Session Files
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+
+# RStudio Files
+.Rproj.user/
+*.Rproj
+
+# Build and Check Files
+.Rcheck/
+.Rbuildignore
+/*.tar.gz
+*-Ex.R
+
+# Knitr and Quarto Cache
+_cache/
+*_cache/
+_knit_cache/
+*.utf8.md

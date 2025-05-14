@@ -1,0 +1,392 @@
+---
+title: "Pratiques avancées de l'analyse géométrique des données"
+Author: "mai 2025 - Viviane LE HAY"
+output:
+  html_document:
+    theme: flatly
+    highlight: tango
+    code_folding: show
+    df_print: paged
+    fig_caption: true
+    fig_width: 7
+    fig_height: 5
+  pdf_document:
+    fig_caption: true
+    fig_width: 7
+    fig_height: 5
+---
+
+<center>
+
+***Atelier Méthodes CED***
+
+***Viviane LE HAY - Mai 2025***
+
+</center>
+
+Ce document détaille pas à pas les étapes de réalisation des analyses géométriques les plus simples quand on débute dans l'application de cette méthode avec R studio :
+
+-   Analyse en composantes principales (ACP)
+-   Analyse des correspondances multiples (ACM)
+-   Analyse des correspondances multiples spécifiques (ACM spé)
+
+Les exemples que nous utiliserons ici sont tirés de la littérature académique (avec accès aux données utilisées par leurs auteur/ices) :
+
+-   ACP : Mayer Nonna, 2013, « Les effets politiques de la crise. Le vote des personnes pauvres et précaires en 2012 », *Informations sociales*, 180(6) : 52-59.
+
+-   ACP : Safi Mirna, 2006, « Le processus d’intégration des immigrés en France : inégalités et segmentation », *Revue française de sociologie*, 47(1) : 3-48.
+
+-   ACM: Duval Julien, 2006, « L'art du réalisme. Le champ du cinéma français au début des années 2000 », *Actes de la recherche en sciences sociales,* 161-162 : 96-115
+
+-   ACM : Le Hay Viviane, Vedel Thierry et Chanvril Flora, 2011 « Usage des médias et politique : une écologie des pratiques informationnelles », Réseaux, (170) : 46-73.
+
+    \newpage
+
+### Préalables : installation puis chargement des packages
+
+#### **`Installation des packages utiles`**
+
+> script pour chaque package : [install.packages("NomPackage")]{style="color: green;"}
+
+**Liste des packages utiles** pour ce qui nous concerne :
+
+*AGD* : Factoshiny, FactoMineR, FactoInvestigate,
+
+*Visualisation de graphes* : ggplot2, shiny, ggpmisc, dplyr
+
+```{r}
+#install.packages("Factoshiny")
+#install.packages("FactoMineR")
+#install.packages("shiny")
+#install.packages("ggplot2") 
+#install.packages("FactoInvestigate") 
+#install.packages("ggpp")
+#install.packages("dplyr") 
+#install.packages("ggpmisc") 
+```
+
+#### **`Chargement de ces packages utiles`**
+
+> script pour chaque package : [library("NomPackage")]{style="color: green;"}
+
+```{r}
+#library(FactoMineR)
+#library(shiny)
+#library(ggplot2)
+#library(FactoInvestigate)
+#library(Factoshiny)
+#library(ggpp)
+#library(dplyr)
+#library(ggpmisc)
+```
+
+\newpage
+
+### Exemple trivial - Mise en oeuvre simple pour apprivoiser R et comprendre "ce que fait" l'ACP
+
+::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
+<strong>**Un mini jeu de données à 2 variables continues**</strong>
+
+--\> Taux de chômage en France 2000 / 2007 (données OCDE)
+:::
+
+#### `Etape 1 : Importation & vérification du fichier dans R (statistiques descriptives)`
+
+Opération possible *via* le menu déroulant de Rstudio (le fichier est dans cet exemple au [format excel]{style="color: #C514D7;"}) :
+
+> File --\> Import Dataset --\> From Excel
+
+```{r ch1, echo=TRUE}
+library(readxl)
+# ici il faut adapter le chemin à sa propre arborescence
+ex1 <- read_excel("EX1_DonneesOCDE_Base2.xls")
+View(ex1)
+```
+
+[ex1]{style="color: red;"} = c'est le nom choisi ici qui servira à appeler le jeu de données dans R dans la suite de cet exemple (vous pouvez l'appeler 'fraise' si vous le souhaitez : alors vous l'écriver ainsi dans le script :
+
+<center>[fraise]{style="color: red;"} \<- read_excel("ex5b-trivial-acp.xls"</center>
+
+NB : Il est plus simple de choisir un nom court, facile à manipuler.
+
+\newpage
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+##### Statistiques descriptives (variables continues)
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+```{r ch2}
+summary(ex1)
+head(ex1)
+```
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+#### Etape 2 : Visualisation du nuage de points des variables initiales
+
+#### \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+```{r ch3}
+library(ggplot2)
+ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
+  geom_point(color = "#EF6A40", size = 3) +
+  geom_text(aes(label = id), hjust = -0.1, vjust = 0.5, size = 3) +
+  theme_minimal() +
+  labs(
+    title = "Ici je peux mettre un titre",
+    x = "légende pour l'axe x",
+    y = "légende pour l'axe y"
+  )
+
+```
+
+::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #F4F5EE;"}
+<strong>**Dico script R**</strong>
+
+geom_point : taille et couleur des points
+
+geom_text : label et ajustement des points
+
+labs : titre du graphes et des axes
+
+**Trucs et astuces**
+
+lien pour les codes des couleurs : <https://htmlcolorcodes.com>
+:::
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+##### Etiqueter sans chevauchement de labels : package ggrepel
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+```{r ch4}
+library(ggrepel)
+ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_text_repel(aes(label = id), size = 3, max.overlaps = Inf) +
+  theme_minimal() +
+  labs(
+  title = "Ici je peux mettre un titre",
+    x = "légende pour l'axe x",
+    y = "légende pour l'axe y"
+  )
+```
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+##### Sélectionner certains points que l'on souhaite étiqueter (et pas les autres) : packages dplyr et ggpmisc
+
+[==\> J'appelle ce graphe intermédiaire "p"]{style="color: #C514D7;"})
+
+Dans le script ci-dessous, c'est ce que signifie :
+
+[==\> p \<-]{style="color: #C514D7;"}
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+```{r}
+#install.packages("dplyr")
+#library(dplyr)
+```
+
+```{r,  ch5 , message=TRUE, warning=TRUE, echo=TRUE, fig.width=8, fig.height=6}
+
+library(stats)
+library(base)
+library(ggplot2)
+library(ggrepel)
+library(dplyr)
+
+
+# Identifier les points extrêmes à annoter (par exemple sur Y)
+points_a_annoter <- ex1 %>%
+  arrange(TxChmge2007CR) %>%
+  slice_head(n = 5) %>%    # les 5 plus bas
+  bind_rows(
+    ex1 %>% arrange(desc(TxChmge2007CR)) %>% slice_head(n = 7)  # les 7 plus hauts
+  )
+# Ajouter aussi le point avec la valeur maximale sur l'axe X
+points_max_pop <- ex1 %>% arrange(desc(TxChmge2000CR)) %>% slice_head(n = 9)
+
+# Combiner avec les autres extrêmes
+points_a_annoter <- ex1 %>%
+  arrange(TxChmge2000CR) %>%
+  slice_head(n = 7) %>%
+  bind_rows(
+    ex1 %>% arrange(desc(TxChmge2007CR)) %>% slice_head(n = (7)),
+    points_max_pop
+  ) %>%
+  distinct()  # pour éviter les doublons
+
+# Nuage de points avec étiquettes seulement sur les points extrêmes
+p <- ggplot(ex1, aes(x = TxChmge2000CR, y = TxChmge2007CR)) +
+  geom_point(color = "steelblue", size = 3) +
+  geom_text_repel(
+    data = points_a_annoter,
+    aes(label = id),
+    size = 3
+  ) +
+  theme_minimal() +
+  labs(
+ title = "Ici je peux mettre un titre",
+    x = "légende pour l'axe x",
+    y = "légende pour l'axe y"
+  )
+print(p)
+```
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+##### Ajout de la Droite de régression au graphe "p" déjà construit
+
+\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+```{r ch6, message=FALSE, warning=FALSE}
+library(ggpmisc)
+# Nuage de points avec étiquettes seulement sur les points extrêmes
+# + ajout de la droite de régression avec geom_smooth
+
+p +
+  geom_smooth(method = "lm", se = TRUE, color = "darkred") +
+  stat_poly_eq(
+    aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")),
+    formula = y ~ x,
+    parse = TRUE,
+    size = 4,
+    color = "darkred"
+  ) 
+```
+
+#### **`Etape 4 (facultatif) :`** `ACP dans Factoshiny`
+
+Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
+
+```{r}
+# script en commentaire pour qu'il ne s'exécute pas dans le notebook
+# acp <- Factoshiny(ex1)
+```
+
+Dès lors que l'on est dans Factoshiny, on peut cocher :
+
+<center>
+
+-   [x] Get the PCA code
+
+    </center>
+
+Qui fournit le script associé aux opérations menées en click-bouton.
+
+On peut ensuite le copier-coller dans la console R :
+
+1.  pour garder la trace de ce que l'on a fait
+
+2.  pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny
+
+[***ATTENTION***]{style="color: purple;"} - [Pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge), il ne faut pas oublier de cliquer sur :]{style="color: purple;"}
+
+<center>
+
+-   [x] Quit the app
+
+    </center>
+
+```{r}
+library(FactoMineR)
+res.PCA<-PCA(ex1,quali.sup=c(1),quanti.sup=c(4,5),graph=FALSE)
+plot.PCA(res.PCA,choix='var')
+plot.PCA(res.PCA,invisible=c('ind','ind.sup'),select='contrib  95',cex=0.5,cex.main=0.5,cex.axis=0.5,label =c('quali'))
+```
+
+```{r}
+summary(res.PCA)
+#dimdesc(res.PCA)
+```
+
+### Exemple 2 - ACP - Article M. Safi
+
+### **`(Etape 3 :)`** `Importation & vérification du fichier dans R`
+
+Opération possible via le menu déroulant de Rstudio (
+
+le fichier est dans cet exemple au format STATA (extension .dta) ) :
+
+> File --\> Import Sataset --\> From Stata
+
+ATTENTION:
+
+```{r echo=TRUE}
+#library(haven) 
+# ici il faut adapter le chemin à sa propre arborescence
+#safi <- read_dta("EX2_ACP_MirnaSAFI_Extract.dta") 
+#View(safi)
+
+safi <- read_excel("EX2_ACP_MirnaSAFI_Extract.xls")
+View(safi)
+```
+
+[safi]{style="color: red;"} = le nom qui servira à appeler le jeu de données dans R dans la suite de l'exercice.
+
+Statistiques descriptives (variables continues) :
+
+```{r}
+summary(safi)
+desc(safi)
+```
+
+#### **`(Etape 4 -facultatif- :)`** `ACP dans Factoshiny`
+
+Factoshiny permet de faire une exploration rapide du résultat de l'analyse géométrique.
+
+```{r}
+# script en commentaire pour qu'il ne s'exécute pas dans le notebook
+acp <- Factoshiny(safi)
+```
+
+Dès lors que l'on est dans Factoshiny, on peut cocher :
+
+-   [x] Get the PCA code
+
+Il devient possible de le copier-coller dans la console R :
+
+1.  pour garder la trace de ce que l'on a fait
+
+2.  pour améliorer, via le script, les graphiques initiaux réalisés par Factoshiny
+
+[***ATTENTION***]{style="color: purple;"} - [Pour retourner dans la console R quand on a joué avec Factoshiny (sans que R ne bugge), il ne faut pas oublier de cliquer sur :]{style="color: purple;"}
+
+-   [x] Quit the app
+
+```{r}
+library(FactoMineR)
+# graphiques initiaux réalisés dans Factoshiny
+res.PCA<-PCA(safi,quali.sup=c(6),graph=FALSE)
+plot.PCA(res.PCA,choix='var')
+plot.PCA(res.PCA,invisible=c('ind.sup'),habillage=6,cex=0.8,cex.main=0.8,cex.axis=0.8,label =c('quali', cex = 3, col = "black"))
+
+plot.PCA(res.PCA,invisible=c('ind.sup'),cex=1.2,cex.main=1.2,cex.axis=1.2,label =c('quali'))
+
+summary(res.PCA)
+dimdesc(res.PCA)
+```
+
+### Exemple 3 - ACP - Score Epices (N. Mayer)
+
+::: {style="border: 2px solid #4840EF; padding: 10px; background-color: #CBE4FA;"}
+<strong>**A VOUS DE JOUER !!**</strong>
+:::
+
+```{r}
+epices <- read_dta("EX3_Epices.dta")
+View(epices)
+
+# Factochiny
+#acp <- Factoshiny(epices)
+
+res.PCA<-PCA(epices,quanti.sup=c(1,2,3,4),graph=FALSE)
+plot.PCA(res.PCA,choix='var',cex=0.75,cex.main=0.75,cex.axis=0.75,
+         col.quanti.sup='#0000FF')
+plot.PCA(res.PCA)
+```

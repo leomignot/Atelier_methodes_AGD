@@ -1,0 +1,68 @@
+Installer R et RStudio
+
+R :  https://cran.r-project.org/
+RStudio : https://www.rstudio.com/
+
+Besoin d’un tutoriel ? Rendez-vous ici : https://quanti.hypotheses.org/1813
+
+Version 1 (Mickael)
+1. télécharger le fichier requirements R
+2. lancez R à partir du dossier où se trouve documents le en pièce jointe
+3. lancer la commande dans la console R:
+    source("requirements.R")
+
+
+Version 2 :
+Script à coller et exécuter dans R :
+
+# Installation des packages :
+
+install.packages("Factoshiny")
+
+install.packages("FactoMineR")
+
+install.packages("shiny")
+
+install.packages("ggplot2") 
+
+install.packages("FactoInvestigate") 
+
+install.packages("ggpp")
+
+install.packages("dplyr")
+
+install.packages("ggpmisc")
+
+# chargement des packages :
+
+library(FactoMineR)
+
+library(shiny)
+
+library(ggplot2)
+
+library(FactoInvestigate)
+
+library(ggpp)
+
+library(dplyr)
+
+library(ggpmisc)
+
+#############
+
+Vous avez exécuté ce script et n’avez pas rencontré de message d’erreur ? Tout est bon. Autrement, nous verrons demain.
+
+#############
+
+# chargement du dernier package :
+
+library(Factoshiny)
+
+#############
+
+Si message d'erreur, nous verrons demain !
+
+ 
+PLUS :
+library(ggrepel)
