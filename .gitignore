@@ -9,7 +9,11 @@
 *.tsv
 *.xlsx
 *.xls
-data/
+
+# Keep the directory structure but ignore all files
+# in the data directory
+data/*
+!data/.gitkeep
 
 # Python/Jupyter Artifacts
 __pycache__/
