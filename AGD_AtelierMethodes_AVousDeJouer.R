@@ -307,7 +307,7 @@ p <- ggadd_supvar(p, mca_duval, duval$WW, axes = c(1,2),
                   segment = FALSE, vname = NULL)
 
 # Step 3: imprimer le plot modifié
-p
+print(p)
 
 
 
