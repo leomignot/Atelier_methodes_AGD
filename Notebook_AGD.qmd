@@ -582,4 +582,5 @@ print(p)
 **A VOUS DE JOUER !!**
 :::
 
-<!-- # tabcontrib(mca_duval, dim = 1) #nope, seulement sur ACM spé ? -->
+<!-- À voir si réintroduit ici :
+# tabcontrib(mca_duval, dim = 1) #nope, seulement sur ACM spé ? -->
